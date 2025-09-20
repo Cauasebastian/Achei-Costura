@@ -1,0 +1,120 @@
+.detalhes-costureiro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.coluna-perfil, .coluna-feedbacks {
+  flex: 1;
+  min-width: 300px;
+}
+
+.foto-perfil {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+
+.nome-perfil {
+  font-size: 2rem;
+  margin: 0 0 5px 0;
+}
+
+.categoria-perfil {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+.contato-perfil, .endereco-perfil {
+  font-size: 1rem;
+  color: #333;
+  margin: 5px 0;
+}
+
+.btn-desbloquear {
+  margin-top: 24px;
+  padding: 12px 24px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.avaliacao {
+  margin-bottom: 30px;
+}
+
+.avaliacao h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+.avaliacao h2 span {
+  font-weight: bold;
+  color: #f0c419;
+}
+
+.estrelas {
+  color: #f0c419;
+  font-size: 1.8rem;
+}
+
+.feedbacks-lista h3 {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.feedback-item {
+  display: flex;
+  align-items: flex-start; /* Alinha o avatar no topo */
+  margin-bottom: 15px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.feedback-usuario-avatar {
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  flex-shrink: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23888"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>');
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.feedback-conteudo {
+  /* A MÁGICA ESTÁ AQUI */
+  display: flex;
+  flex-direction: column; /* Força os itens a ficarem um em cima do outro */
+}
+
+.feedback-usuario-nome {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 5px; /* Pequeno espaço entre o nome e o comentário */
+}
+
+.feedback-texto {
+  border: 1px solid #ddd;
+  padding: 8px 15px;
+  border-radius: 20px;
+  background-color: #f9f9f9;
+}

@@ -1,0 +1,42 @@
+.main-header {
+  background-color: var(--cor-principal);
+  padding: 15px 30px;
+  color: var(--cor-branco);
+}
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: auto;
+}
+.logo-container {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+.main-nav a, .login-btn {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: 500;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+.search-bar input {
+  border-radius: 15px;
+  border: 1px solid #fff;
+  padding: 5px 10px;
+  background: transparent;
+  color: white;
+}
+.search-bar input::placeholder {
+  color: #eee;
+}
+
+.logo-imagem {
+  height: 80px; 
+  width: auto;  
+  border-radius: 10px;
+}
