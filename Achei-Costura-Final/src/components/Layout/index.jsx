@@ -1,12 +1,13 @@
 import React from 'react';
 import Header from '../Header';
 import Footer from '../Footer';
+import './style.css'; 
 
 function Layout({ children }) {
   return (
-    <div>
+    <div className="app-container"> 
       <Header />
-      <main>
+      <main className="main-content-area"> 
         {children}
       </main>
       <Footer />

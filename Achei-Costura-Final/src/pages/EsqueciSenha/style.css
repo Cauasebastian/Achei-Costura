@@ -1,0 +1,75 @@
+.esqueci-senha-container {
+  max-width: 550px;
+  margin: 60px auto;
+  padding: 40px 50px;
+  background-color: #f0f2f5;
+  border-radius: 12px;
+}
+
+.esqueci-senha-form h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.8rem;
+}
+
+.esqueci-senha-form .instrucoes {
+  text-align: center;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* A mágica para alinhar o ícone e o input */
+.input-com-icone {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 0 12px;
+}
+
+.input-com-icone i {
+  font-size: 1.2rem;
+  color: #888;
+  margin-right: 10px;
+}
+
+.input-com-icone input {
+  width: 100%;
+  padding: 12px 0;
+  border: none; /* A borda agora está no container */
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none; /* Remove a borda azul ao focar */
+}
+
+.btn-enviar-email {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--cor-principal);
+  color: var(--cor-branco);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: opacity 0.2s;
+}
+
+.btn-enviar-email:hover {
+  opacity: 0.9;
+}

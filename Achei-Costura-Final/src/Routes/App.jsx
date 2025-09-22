@@ -1,8 +1,13 @@
 import React from 'react';
-import AppRoutes from './routes/AppRoutes';
+import AppRoutes from './Routes/AppRoutes';
+import Layout from './components/Layout';
 
 function App() {
-  return <AppRoutes />;
+  return (
+    <Layout>
+      <AppRoutes />
+    </Layout>
+  );
 }
 
 export default App;

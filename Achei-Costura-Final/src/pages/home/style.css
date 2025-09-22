@@ -1,0 +1,35 @@
+.home-container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 30px;
+}
+
+.filtros-principais {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 20px;
+}
+
+.filtro-btn {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color: #555;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.filtro-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.filtro-btn.active {
+  background-color: var(--cor-principal);
+  color: var(--cor-branco);
+  border-color: var(--cor-principal);
+}
