@@ -1,30 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import AnuncioCarrossel from '../../components/AnuncioCarrossel';
-import GridDeEmpresas from '../../components/GridDeEmpresas';
+import GridDeItens from '../../components/GridDeItens';
 import Filtros from '../../components/Filtros';
+import AnuncioCarrossel from '../../components/AnuncioCarrossel';
+import { getEmpresas } from '../../data/api';
 import './style.css';
 
 function EmpresasPage() {
   const [empresas, setEmpresas] = useState([]);
   const [filtros, setFiltros] = useState({ localizacao: 'Todas' });
-  const navigate = useNavigate(); // NOVIDADE: inicializando a ferramenta de navegação
+  const navigate = useNavigate();
 
-  // ... (seu useEffect e handleFiltroChange continuam aqui, sem alterações) ...
   useEffect(() => {
-    const dadosDoServidor = [
-        { id: 1, nome: 'Roupas Estilosas', categoria: 'Modinha e Moda Praia', cidade: 'Caruaru - PE', contato: '81 9...****' },
-        { id: 2, nome: 'Malhas & Cia', categoria: 'Malharia', cidade: 'Toritama - PE', contato: '81 9...****' },
-        { id: 3, nome: 'Jeans da Capital', categoria: 'Jeans', cidade: 'Toritama - PE', contato: '81 9...****' },
-        { id: 4, nome: 'Costura Fina', categoria: 'Alta Costura', cidade: 'Caruaru - PE', contato: '81 9...****' },
-    ];
-    setEmpresas(dadosDoServidor);
+    setEmpresas(getEmpresas());
   }, []);
 
   const handleFiltroChange = (nomeDoFiltro, valor) => {
     setFiltros(filtrosAnteriores => ({ ...filtrosAnteriores, [nomeDoFiltro]: valor }));
   };
-
 
   const empresasFiltradas = empresas.filter(empresa => {
     const passouNoFiltroDeLocalizacao = 
@@ -32,26 +25,17 @@ function EmpresasPage() {
     return passouNoFiltroDeLocalizacao;
   });
 
-  // NOVIDADE: Função que será chamada ao clicar no botão "Costureiro"
   const irParaCostureiros = () => {
-    navigate('/costureiros'); // Navega para a rota /costureiros
+    navigate('/costureiros');
   };
 
   return (
     <main className="main-content">
-      <Link to="/anuncie" className="anuncie-link">
-        <div className="anuncie-banner">
-          <button className="arrow-btn"><span>←</span></button>
-          <h2>ANUNCIE AQUI</h2>
-          <button className="arrow-btn"><span>→</span></button>
-        </div>
-      </Link>
+      <AnuncioCarrossel />
 
       <div className="filtros-section">
         <div className="tipo-filtros">
-          {/* O botão "Empresas" não faz nada por enquanto, pois já estamos nele */}
           <button className="tipo-btn active">Empresas</button>
-          {/* NOVIDADE: Adicionando o onClick ao botão "Costureiro" */}
           <button className="tipo-btn" onClick={irParaCostureiros}>
             Costureiro
           </button>
@@ -59,10 +43,12 @@ function EmpresasPage() {
         <Filtros 
           filtrosAtuais={filtros}
           onFiltroChange={handleFiltroChange}
+          itens={empresas} // Passando os itens para o filtro
         />
       </div>
 
-      <GridDeEmpresas empresas={empresasFiltradas} tipo="empresas" />
+      {/* USANDO O NOVO COMPONENTE COM A PROP "itens" */}
+      <GridDeItens itens={empresasFiltradas} tipo="empresas" />
     </main>
   );
 }

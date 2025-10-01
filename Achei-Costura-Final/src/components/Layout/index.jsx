@@ -7,7 +7,7 @@ function Layout({ children }) {
   return (
     <div className="app-container"> 
       <Header />
-      <main className="main-content-area"> 
+      <main className="main-content-wrapper"> 
         {children}
       </main>
       <Footer />

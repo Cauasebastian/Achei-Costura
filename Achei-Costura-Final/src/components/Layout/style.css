@@ -4,6 +4,10 @@
   min-height: 100vh;
 }
 
-.main-content-area {
-  flex-grow: 1;
+.main-content-wrapper {
+  flex-grow: 1; 
+  width: 100%;
+  max-width: 1400px; 
+  margin: 0 auto; 
+  padding: 30px; 
 }

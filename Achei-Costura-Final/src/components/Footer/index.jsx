@@ -20,7 +20,8 @@ function Footer() {
           <Link to="/empresas">Achei costura</Link>
           <Link to="/costureiros">Costureiros</Link>
           <Link to="/login">Login</Link>
-          <Link to="/anuncie">Cadastrar</Link>
+          <Link to="/cadastro">cadastro</Link>
+          <Link to="/anuncie">Seu anúncio</Link>
         </nav>
 
         {/* Bloco da Direita: Direitos Reservados (movido para cá) */}

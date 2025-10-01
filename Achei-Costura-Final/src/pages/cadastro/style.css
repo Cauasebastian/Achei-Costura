@@ -2,8 +2,9 @@
   max-width: 500px;
   margin: 60px auto;
   padding: 40px;
-  background-color: #f0f2f5; /* Um cinza um pouco mais escuro que o fundo */
+  background-color: #ffffff;
   border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 .cadastro-form h1 {
@@ -22,6 +23,7 @@
   margin-bottom: 8px;
   font-weight: 500;
   color: #555;
+  text-align: left;
 }
 
 .form-group input {
@@ -49,4 +51,52 @@
 
 .btn-cadastrar:hover {
   opacity: 0.9;
+}
+
+.tipo-cadastro-container {
+  margin-bottom: 30px;
+}
+
+.botoes-tipo {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tipo-cadastro-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background-color: #fff;
+  color: #555;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tipo-cadastro-btn:not(:last-child) {
+  border-right: 1px solid #ccc;
+}
+
+.tipo-cadastro-btn.active {
+  background-color: var(--cor-principal);
+  color: var(--cor-branco);
+  font-weight: bold;
+}
+
+.links-auxiliares-cadastro {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.links-auxiliares-cadastro a {
+  color: var(--cor-principal);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.links-auxiliares-cadastro a:hover {
+  text-decoration: underline;
 }

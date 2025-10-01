@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import GridDeEmpresas from '../../components/GridDeEmpresas';
+import GridDeItens from '../../components/GridDeItens'; // NOME NOVO
 import Filtros from '../../components/Filtros';
 import AnuncioCarrossel from '../../components/AnuncioCarrossel';
+import { getCostureiros } from '../../data/api';
 import '../Empresas/style.css'; 
 
 function CostureirosPage() {
@@ -11,43 +12,35 @@ function CostureirosPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Seus dados de exemplo de costureiros
-    const dadosDosCostureiros = [
-      { id: 101, nome: 'Gabriel Batista', categoria: 'Modinha e Moda Praia', contato: '81 94589-****', imageUrl: 'https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-      { id: 102, nome: 'Sara Gabriely', categoria: 'Modinha', contato: '81 94589-****', imageUrl: 'https://images.pexels.com/photos/3772510/pexels-photo-3772510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    ];
-    setCostureiros(dadosDosCostureiros);
+    setCostureiros(getCostureiros());
   }, []);
   
   const handleFiltroChange = (nomeDoFiltro, valor) => {
-    setFiltros(filtrosAnteriores => ({ ...filtrosAnteriores, [nomeDoFiltro]: valor }));
+    setFiltros(filtrosAnteriores => ({
+      ...filtrosAnteriores,
+      [nomeDoFiltro]: valor,
+    }));
   };
 
-  const costureirosFiltrados = costureiros; // Sua lógica de filtro virá aqui
+  const costureirosFiltrados = costureiros.filter(costureiro => {
+      const passouNoFiltroDeLocalizacao =
+        filtros.localizacao === 'Todas' || costureiro.cidade === filtros.localizacao;
+      return passouNoFiltroDeLocalizacao;
+  });
 
-  // Função para navegar para a página de Empresas
   const irParaEmpresas = () => {
     navigate('/empresas');
   };
 
   return (
-    // Usamos a mesma classe 'main-content' da página de Empresas
     <main className="main-content">
-      <Link to="/anuncie" className="anuncie-link">
-        <div className="anuncie-banner">
-          <button className="arrow-btn"><span>←</span></button>
-          <h2>ANUNCIE AQUI</h2>
-          <button className="arrow-btn"><span>→</span></button>
-        </div>
-      </Link>
+      <AnuncioCarrossel />
 
       <div className="filtros-section">
         <div className="tipo-filtros">
-          {/* O botão "Empresas" agora te leva para a página de empresas */}
           <button className="tipo-btn" onClick={irParaEmpresas}>
             Empresas
           </button>
-          {/* O botão "Costureiro" agora é o ativo */}
           <button className="tipo-btn active">
             Costureiro
           </button>
@@ -55,10 +48,12 @@ function CostureirosPage() {
         <Filtros 
           filtrosAtuais={filtros}
           onFiltroChange={handleFiltroChange}
+          itens={costureiros} // Passando os itens para o filtro
         />
       </div>
 
-      <GridDeEmpresas empresas={costureirosFiltrados} tipo="costureiros" />
+      {/* USANDO O NOVO COMPONENTE COM A PROP "itens" */}
+      <GridDeItens itens={costureirosFiltrados} tipo="costureiros" />
     </main>
   );
 }

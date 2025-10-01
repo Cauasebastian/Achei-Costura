@@ -1,7 +1,5 @@
 .home-container {
-  max-width: 1400px;
-  margin: auto;
-  padding: 30px;
+  padding: 0; 
 }
 
 .filtros-principais {
@@ -32,4 +30,13 @@
   background-color: var(--cor-principal);
   color: var(--cor-branco);
   border-color: var(--cor-principal);
+}
+
+.filtros-container-geral {
+  display: flex;                 
+  justify-content: space-between;  
+  align-items: center;           
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 20px;
 }

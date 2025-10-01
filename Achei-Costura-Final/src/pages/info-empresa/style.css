@@ -172,3 +172,21 @@
   font-size: 1.5rem;
   line-height: 1;
 }
+
+@media (max-width: 768px) {
+
+  .detalhes-container {
+    /* Em vez de 'flex', que coloca lado a lado, usamos 'block' para empilhar */
+    display: block;
+    padding: 15px; /* Diminui o espaçamento nas laterais */
+  }
+
+  .coluna-perfil, .coluna-feedbacks {
+    /* Remove o espaçamento entre as colunas quando elas estão empilhadas */
+    margin-bottom: 30px;
+  }
+
+  .nome-perfil {
+    font-size: 1.8rem; /* Diminui um pouco o tamanho do título */
+  }
+}

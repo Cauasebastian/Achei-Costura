@@ -1,14 +1,14 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Importações com os nomes corretos das suas pastas
+// Todas as importações de páginas devem ser SEM as chaves
 import HomePage from '../pages/home';
 import EmpresasPage from '../pages/Empresas';
 import InfoEmpresaPage from '../pages/info-empresa';
 import CostureirosPage from '../pages/Costureiros';
 import InfoCostureiroPage from '../pages/info-costureiro';
 import AnunciePage from '../pages/Anuncie';
-import CadastroPage from '../pages/cadastro';
+import CadastroPage from '../pages/cadastro'; 
 import LoginPage from '../pages/login';
 import EsqueciSenhaPage from '../pages/EsqueciSenha';
 

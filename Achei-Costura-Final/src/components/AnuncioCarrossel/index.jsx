@@ -12,7 +12,6 @@ const ANUNCIOS_DESTAQUE = [
 function AnuncioCarrossel() {
     const [indiceAtual, setIndiceAtual] = useState(0);
 
-    // Funções para os botões de seta
     const irParaAnterior = () => {
         const isFirstSlide = indiceAtual === 0;
         const novoIndice = isFirstSlide ? ANUNCIOS_DESTAQUE.length - 1 : indiceAtual - 1;
@@ -25,32 +24,29 @@ function AnuncioCarrossel() {
         setIndiceAtual(novoIndice);
     };
 
-    // Efeito para a rotação automática
     useEffect(() => {
-        // Cria um timer que chama a função irParaProximo a cada 5 segundos
         const timer = setInterval(irParaProximo, 5000); 
-
-        // Limpa o timer quando o componente é "desmontado" para evitar bugs
         return () => clearInterval(timer);
-    }, [indiceAtual]); // O [indiceAtual] garante que o timer é resetado a cada mudança
+    }, [indiceAtual]);
 
     const anuncioAtual = ANUNCIOS_DESTAQUE[indiceAtual];
 
     return (
         <div className="carrossel-container">
-            {/* O onClick agora chama a função com o nome correto */}
             <button onClick={irParaAnterior} className="arrow-btn-carrossel">
                 <span>←</span>
             </button>
             
             <Link to={`/${anuncioAtual.tipo}/${anuncioAtual.id}`} className="anuncio-destaque-link">
                 <div className="anuncio-destaque-conteudo">
-                    <p>ANUNCIE AQUI</p>
-                    <h3>{anuncioAtual.nome}</h3>
+                    <img src={anuncioAtual.imageUrl} alt={anuncioAtual.nome} className="anuncio-destaque-foto" />
+                    <div className="anuncio-destaque-texto">
+                        <h3>{anuncioAtual.nome}</h3>
+                        <p>{anuncioAtual.categoria}</p>
+                    </div>
                 </div>
             </Link>
 
-            {/* O onClick agora chama a função com o nome correto */}
             <button onClick={irParaProximo} className="arrow-btn-carrossel">
                 <span>→</span>
             </button>

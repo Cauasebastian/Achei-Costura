@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './style.css'; 
+// IMPORTANDO A FUNÇÃO DO NOSSO BANCO DE DADOS CENTRAL
+import { getEmpresaById } from '../../data/api';
 
 function InfoEmpresaPage() {
   const { id } = useParams();
   const [empresa, setEmpresa] = useState(null);
 
   useEffect(() => {
-    const dadosDasEmpresas = [
-        { id: 1, nome: 'Roupas Estilosas', categoria: 'Modinha e Moda Praia', contato: '(81) 99832-****', endereco: 'Rua Go*******, *******, Centro, Caruaru', imageUrl: 'https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', avaliacao: 5 },
-        { id: 2, nome: 'Malhas & Cia', categoria: 'Malharia', contato: '(81) 98765-****', endereco: 'Av. Principal, 456, Centro, Toritama', imageUrl: 'https://images.pexels.com/photos/2043590/pexels-photo-2043590.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', avaliacao: 4 },
-        { id: 3, nome: 'Jeans da Capital', categoria: 'Jeans', contato: '(81) 91234-****', endereco: 'Rua da Confecção, 789, Sulanca, Santa Cruz', imageUrl: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', avaliacao: 5 },
-    ];
-    
-    const encontrada = dadosDasEmpresas.find(e => e.id === parseInt(id));
-    setEmpresa(encontrada);
+    // Agora usamos nossa função central para encontrar a empresa pelo ID
+    const empresaEncontrada = getEmpresaById(id);
+    setEmpresa(empresaEncontrada);
   }, [id]);
 
   if (!empresa) {
     return <div>Carregando informações da empresa...</div>;
   }
 
+  // O seu JSX para exibir os detalhes continua o mesmo
   return (
-    <div className="detalhes-container"> 
-      {/* Coluna da Esquerda (Perfil) */}
+    <div className="detalhes-container">
       <div className="coluna-perfil">
         <img src={empresa.imageUrl} alt={empresa.nome} className="foto-perfil" />
         <h1 className="nome-perfil">{empresa.nome}</h1>
@@ -32,8 +29,6 @@ function InfoEmpresaPage() {
         <p className="endereco-perfil">Endereço: {empresa.endereco}</p>
         <button className="btn-desbloquear">Desbloquear contato</button>
       </div>
-
-      {/* COLUNA DA DIREITA (AVALIAÇÃO E FEEDBACKS) - ESTA PARTE ESTAVA FALTANDO */}
       <div className="coluna-feedbacks">
         <div className="avaliacao">
           <h2>Avaliação <span>{empresa.avaliacao}/5</span></h2>

@@ -1,30 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Usamos Link para a navegação
+
 import './style.css'; 
 
-function LoginPage() {
+export function LoginPage() { // Lembre-se de usar o nome correto da sua função
   return (
-    <div className="login-container">
-      <form className="login-form">
+    <div className="auth-container">
+      <div className="auth-box">
         <h1>Login</h1>
         
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" required />
-        </div>
+        <form>
+          <div className="input-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          
+          <div className="input-group">
+            <label htmlFor="senha">Senha</label>
+            <input type="password" id="senha" name="senha" required />
+          </div>
+          
+          <button type="submit" className="auth-button">
+            Entrar
+          </button>
+        </form>
 
-        <div className="form-group">
-          <label htmlFor="senha">Senha:</label>
-          <input type="password" id="senha" name="senha" required />
+        <div className="auth-links">
+          <a href="/esqueci-senha">Esqueceu a sua senha?</a>
+          <a href="/cadastro">Não possui um cadastro?</a>
         </div>
-
-        <button type="submit" className="btn-login">Entrar</button>
-
-        <div className="links-auxiliares">
-          <Link to="/esqueci-senha">Esqueceu a sua senha?</Link>
-          <Link to="/cadastro">Não possui um cadastro?</Link>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }

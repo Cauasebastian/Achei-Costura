@@ -1,72 +1,98 @@
-.login-container {
-  max-width: 500px;
-  margin: 60px auto;
-  padding: 40px;
-  background-color: #f0f2f5; 
-  border-radius: 12px;
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 150px);
+  width: 100%; /* Garante a centralização correta */
 }
 
-.login-form h1 {
+/* A caixa branca do formulário */
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
   text-align: center;
+}
+
+/* Título (Login / Crie sua Conta) */
+.auth-box h1 {
   margin-top: 0;
   margin-bottom: 30px;
-  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+  color: #343a40;
 }
 
-.form-group {
+/* Agrupamento de label + input */
+.input-group {
   margin-bottom: 20px;
+  text-align: left;
 }
 
-.form-group label {
+.input-group label {
   display: block;
   margin-bottom: 8px;
+  font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: #495057;
 }
 
-.form-group input {
+.input-group input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  background-color: #fff;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-login {
+.input-group input:focus {
+  outline: none;
+  border-color: #1a5e54;
+  box-shadow: 0 0 0 3px rgba(26, 94, 84, 0.1);
+}
+
+/* Botão principal (Entrar / Cadastrar) */
+.auth-button {
   width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  background-color: var(--cor-principal);
-  color: var(--cor-branco);
-  font-size: 1.1rem;
+  padding: 14px;
+  margin-top: 10px;
+  font-size: 16px;
   font-weight: bold;
+  color: #fff;
+  background-color: #1a5e54;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: opacity 0.2s;
+  transition: background-color 0.2s ease;
 }
 
-.btn-login:hover {
-  opacity: 0.9;
+.auth-button:hover {
+  background-color: #12423a;
 }
 
-.links-auxiliares {
+/* Links abaixo do botão */
+.auth-links {
   margin-top: 25px;
-  text-align: center;
 }
 
-.links-auxiliares a {
-  display: block; /* Deixa um link em cima do outro */
-  color: var(--cor-principal);
-  text-decoration: none;
+.auth-links a {
+  display: block;
   margin-top: 10px;
+  color: #6c757d;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.links-auxiliares a:hover {
+.auth-links a:hover {
+  color: #1a5e54;
   text-decoration: underline;
-}
-
-.main-footer {
-    margin-bottom: 0%;
 }
