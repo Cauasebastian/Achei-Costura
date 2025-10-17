@@ -1,0 +1,39 @@
+.filtros-container {
+  display: flex; /* <-- ESSA LINHA É A MAIS IMPORTANTE */
+  justify-content: space-between; /* <-- ESSA TAMBÉM */
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  margin: 20px 0;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 10px;
+}
+
+.tabs-container button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background-color: #f7f7f7;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.tabs-container button.active {
+  background-color: #006D5B;
+  color: white;
+  border-color: #006D5B;
+}
+
+.location-select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  background-color: #fff;
+  min-width: 200px;
+}

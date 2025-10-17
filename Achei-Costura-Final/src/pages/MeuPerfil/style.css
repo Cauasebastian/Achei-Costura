@@ -1,0 +1,99 @@
+.meu-perfil-container {
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+/* Reutilizando a classe de título padrão */
+.titulo-pagina {
+  text-align: center;
+  color: #006D5B;
+  font-size: 2.8em;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.foto-perfil-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.foto-perfil-grande {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.perfil-card {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #f0f2f5; /* Cinza claro do design */
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.perfil-card h2 {
+  font-size: 1.8em;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Duas colunas de tamanho igual */
+  gap: 25px 40px; /* Espaçamento vertical e horizontal */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  min-height: 120px; /* Altura mínima para áreas de texto */
+  resize: vertical;
+}
+
+.btn-salvar {
+  background-color: #006D5B;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 30px;
+  display: block; /* Para aplicar margem */
+}
+
+.btn-salvar:hover {
+  background-color: #006D5B;
+}

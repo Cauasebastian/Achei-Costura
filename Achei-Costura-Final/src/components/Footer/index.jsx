@@ -17,8 +17,7 @@ function Footer() {
 
         {/* Bloco Central: Links */}
         <nav className="footer-links">
-          <Link to="/empresas">Achei costura</Link>
-          <Link to="/costureiros">Costureiros</Link>
+          <Link to="../home">Achei costura</Link>
           <Link to="/login">Login</Link>
           <Link to="/cadastro">cadastro</Link>
           <Link to="/anuncie">Seu anúncio</Link>

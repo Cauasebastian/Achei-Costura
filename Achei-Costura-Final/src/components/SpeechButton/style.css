@@ -1,0 +1,20 @@
+.speech-button {
+  background-color: transparent;
+  border: 1px solid #006D5B;
+  color: #006D5B;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin-left: 10px; /* Espaço entre o texto e o botão */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.speech-button:hover {
+  background-color: #006D5B;
+  color: white;
+}

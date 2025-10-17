@@ -1,0 +1,103 @@
+.contato-container {
+  width: 100%;
+  background-color: #f8f9fa; /* ADICIONADO: Fundo padrão */
+  padding: 40px 0;
+}
+
+/* REMOVIDO: A faixa verde do topo não é mais necessária */
+/*
+.hero-contato { ... }
+.hero-contato h1 { ... }
+*/
+
+/* ADICIONADO: Estilo padrão para o título (o mesmo do Sobre Nós) */
+.titulo-pagina {
+  text-align: center;
+  color: #008080;
+  font-size: 2.8em;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+/* ALTERADO: O conteúdo agora é um cartão branco com sombra */
+.conteudo-contato {
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+  padding: 40px;
+  background-color: #ffffff; /* Fundo branco */
+  border: none; /* Borda antiga removida */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+.conteudo-contato p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Estilos do formulário (mantidos) */
+.form-contato {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-contato label {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #006D5B;
+  margin-bottom: -5px;
+}
+
+.form-contato select,
+.form-contato textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  font-family: inherit;
+}
+
+.form-contato textarea {
+  resize: vertical;
+}
+
+.form-contato .btn-enviar {
+  background-color: #006D5B;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: flex-start;
+}
+
+.form-contato .btn-enviar:hover {
+  background-color: #006D5B;
+}
+
+.readable-section {
+  display: flex;
+  align-items: flex-start; /* Alinha os itens pelo topo, que fica melhor com texto de múltiplas linhas */
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.readable-section p {
+  margin: 0;
+  flex: 1; /* Permite que o parágrafo cresça e quebre a linha, sem empurrar o botão */
+}
+
+/* NOVO: Estilo para alinhar o botão ao lado dos labels do formulário */
+.form-label-container {
+  display: flex;
+  justify-content: space-between; /* Joga o botão para a direita */
+  align-items: center;
+}

@@ -6,7 +6,7 @@ import './style.css';
 function GridDeEmpresas({ empresas, tipo }) {
   console.log("2. GridDeEmpresas recebeu o tipo:", tipo);
   if (!empresas || empresas.length === 0) {
-    return <p>Nenhum item encontrado.</p>;
+    return <p>Ninguém foi encontrado.</p>;
   }
 
   return (

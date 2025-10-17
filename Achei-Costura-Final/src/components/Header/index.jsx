@@ -14,7 +14,8 @@ function Header() {
           </div>
         </Link>
         <nav className="main-nav">
-          <Link to="/">Home</Link>
+          <Link to="/">Início</Link>
+          <Link to="/planos">Planos</Link>
           <Link to="/contato">Contato</Link>
           <Link to="/sobre-nos">Sobre nós</Link>
         </nav>
@@ -28,4 +29,5 @@ function Header() {
     </header>
   );
 }
+
 export default Header;

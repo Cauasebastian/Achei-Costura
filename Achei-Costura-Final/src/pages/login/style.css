@@ -55,7 +55,7 @@
 
 .input-group input:focus {
   outline: none;
-  border-color: #1a5e54;
+  border-color: #006D5B;
   box-shadow: 0 0 0 3px rgba(26, 94, 84, 0.1);
 }
 
@@ -67,7 +67,7 @@
   font-size: 16px;
   font-weight: bold;
   color: #fff;
-  background-color: #1a5e54;
+  background-color: #006D5B;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -75,7 +75,7 @@
 }
 
 .auth-button:hover {
-  background-color: #12423a;
+  background-color: #006D5B;
 }
 
 /* Links abaixo do botão */
@@ -93,6 +93,27 @@
 }
 
 .auth-links a:hover {
-  color: #1a5e54;
+  color: #006D5B;
   text-decoration: underline;
+}
+
+.form-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.form-header h1 {
+  margin: 0; /* Remove a margem padrão do h1 */
+}
+
+
+/* Para os labels "Email", "Senha" e seus ícones */
+.form-label-container {
+  display: flex;
+  justify-content: space-between; /* Alinha o texto na esquerda e o botão na direita */
+  align-items: center;
+  margin-bottom: 8px; /* Adiciona um espaço antes do campo de input */
 }

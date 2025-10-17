@@ -1,0 +1,98 @@
+.pagamento-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.pagamento-titulo {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.pagamento-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.metodo-pagamento {
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.radio-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+}
+
+.form-section {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1; /* Faz com que os campos dividam o espaço igualmente */
+}
+
+.pix-info p {
+  text-align: center;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.btn-confirmar {
+  background-color: #006D5B; /* Mesmo verde da imagem */
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-confirmar:hover {
+  background-color: #006D5B;
+}

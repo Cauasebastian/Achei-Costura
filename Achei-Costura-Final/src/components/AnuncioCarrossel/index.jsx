@@ -2,56 +2,54 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './style.css';
 
-// Dados de exemplo de quem pagou pelo anúncio.
-const ANUNCIOS_DESTAQUE = [
-    { id: 101, nome: 'Gabriel Batista', categoria: 'Costureiro - Moda Praia', tipo: 'costureiros', imageUrl: 'https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { id: 1, nome: 'Roupas Estilosas', categoria: 'Empresa - Modinha', tipo: 'empresas', imageUrl: 'https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { id: 102, nome: 'Sara Gabriely', categoria: 'Costureira - Modinha', tipo: 'costureiros', imageUrl: 'https://images.pexels.com/photos/3772510/pexels-photo-3772510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-];
+function AnuncioCarrossel({ items = [] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-function AnuncioCarrossel() {
-    const [indiceAtual, setIndiceAtual] = useState(0);
+  const goToNext = () => {
+    const isLastItem = currentIndex === items.length - 1;
+    const newIndex = isLastItem ? 0 : currentIndex + 1;
+    setCurrentIndex(newIndex);
+  };
 
-    const irParaAnterior = () => {
-        const isFirstSlide = indiceAtual === 0;
-        const novoIndice = isFirstSlide ? ANUNCIOS_DESTAQUE.length - 1 : indiceAtual - 1;
-        setIndiceAtual(novoIndice);
-    };
+  const goToPrevious = () => {
+    const isFirstItem = currentIndex === 0;
+    const newIndex = isFirstItem ? items.length - 1 : currentIndex - 1;
+    setCurrentIndex(newIndex);
+  };
 
-    const irParaProximo = () => {
-        const isLastSlide = indiceAtual === ANUNCIOS_DESTAQUE.length - 1;
-        const novoIndice = isLastSlide ? 0 : indiceAtual + 1;
-        setIndiceAtual(novoIndice);
-    };
+  useEffect(() => {
+    if (items.length > 0) {
+      const timer = setTimeout(goToNext, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, items]);
 
-    useEffect(() => {
-        const timer = setInterval(irParaProximo, 5000); 
-        return () => clearInterval(timer);
-    }, [indiceAtual]);
+  if (!items || items.length === 0) {
+    return null;
+  }
 
-    const anuncioAtual = ANUNCIOS_DESTAQUE[indiceAtual];
+  const currentItem = items[currentIndex];
 
-    return (
-        <div className="carrossel-container">
-            <button onClick={irParaAnterior} className="arrow-btn-carrossel">
-                <span>←</span>
-            </button>
-            
-            <Link to={`/${anuncioAtual.tipo}/${anuncioAtual.id}`} className="anuncio-destaque-link">
-                <div className="anuncio-destaque-conteudo">
-                    <img src={anuncioAtual.imageUrl} alt={anuncioAtual.nome} className="anuncio-destaque-foto" />
-                    <div className="anuncio-destaque-texto">
-                        <h3>{anuncioAtual.nome}</h3>
-                        <p>{anuncioAtual.categoria}</p>
-                    </div>
-                </div>
-            </Link>
+  return (
+    <div className="carrossel-container-novo">
+      <button onClick={goToPrevious} className="carrossel-arrow-novo left-arrow-novo">
+        ←
+      </button>
 
-            <button onClick={irParaProximo} className="arrow-btn-carrossel">
-                <span>→</span>
-            </button>
+      {/* O Link agora envolve apenas a área central para não pegar as setas */}
+      <Link to={`/${currentItem.tipo}/${currentItem.id}`} className="carrossel-slide-novo">
+        <img src={currentItem.imageUrl} alt={currentItem.nome} className="carrossel-imagem-novo" />
+        <div className="carrossel-info-novo">
+          <p className="carrossel-nome-novo">{currentItem.nome}</p>
+          <p className="carrossel-categoria-novo">{currentItem.tipo.charAt(0).toUpperCase() + currentItem.tipo.slice(1)} • {currentItem.categoria}</p>
         </div>
-    );
+      </Link>
+      
+      <button onClick={goToNext} className="carrossel-arrow-novo right-arrow-novo">
+        →
+      </button>
+    </div>
+  );
 }
 
 export default AnuncioCarrossel;

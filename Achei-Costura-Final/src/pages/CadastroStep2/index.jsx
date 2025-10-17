@@ -1,117 +1,122 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SpeechButton from '../../components/SpeechButton';
 import './style.css';
 
-function CadastroStep2() {
-  // Estados para TODAS as perguntas
-  const [experiencia, setExperiencia] = useState('');
-  const [especialidades, setEspecialidades] = useState('');
-  const [maquinas, setMaquinas] = useState('');
-  const [numCostureiros, setNumCostureiros] = useState('');
-  const [disponibilidade, setDisponibilidade] = useState('');
+function CadastroStep2Page() {
+  const [formData, setFormData] = useState({
+    tempoExperiencia: '',
+    numCostureiros: '',
+    disponibilidade: '',
+    especialidade: '',
+    maquinas: ''
+  });
+  const navigate = useNavigate();
+
+  // Uma única função para lidar com a mudança de qualquer campo do formulário
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Em um app real, aqui você enviaria todos os dados (passo 1 e 2) para a API
+    console.log('Dados completos do cadastro:', formData);
+    alert('Cadastro finalizado com sucesso!');
+    // Redireciona para a página de perfil recém-criada
+    navigate('/meu-perfil'); 
+  };
+
+  // Textos para os botões de áudio
+  const textos = {
+    exp: "Há quanto tempo você trabalha com costura?",
+    equipe: "Quantos costureiros trabalham com você?",
+    disp: "Qual seu nível de disponibilidade para produção?",
+    esp: "Sua especialidade",
+    maq: "Suas Máquinas"
+  };
+
+  // Opções para os botões de rádio
+  const opcoesExp = ["De 0 a 2 anos", "De 2 a 5 anos", "De 5 a 10 anos", "Mais de 10 anos"];
+  const opcoesEquipe = ["Trabalho sozinho(a)", "2 costureiros", "De 3 a 5 costureiros", "De 6 a 10 costureiros", "10 ou mais costureiros"];
+  const opcoesDisp = ["Geral (Manhã e Tarde)", "Manhã", "Tarde", "Apenas Finais de semana"];
 
   return (
-    <div className="cadastro-step2-container">
-      
-      {/* --- Pergunta de Tempo de Trabalho --- */}
-      <div className="form-group">
-        <label>Há quanto tempo você trabalha com costura?</label>
-        <div className="radio-group">
-          <div className="radio-option">
-            <input type="radio" id="exp1" name="experiencia" value="0-2" onChange={(e) => setExperiencia(e.target.value)} />
-            <label htmlFor="exp1">de 0 a 2 anos</label>
+    <div className="step2-container">
+      <form className="step2-card" onSubmit={handleSubmit}>
+        
+        {/* Pergunta 1: Tempo de Experiência */}
+        <div className="form-group">
+          <div className="form-label-container">
+            <h3>{textos.exp}</h3>
+            <SpeechButton textToSpeak={textos.exp} />
           </div>
-          <div className="radio-option">
-            <input type="radio" id="exp2" name="experiencia" value="3-5" onChange={(e) => setExperiencia(e.target.value)} />
-            <label htmlFor="exp2">de 3 a 5 anos</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="exp3" name="experiencia" value="6-10" onChange={(e) => setExperiencia(e.target.value)} />
-            <label htmlFor="exp3">de 6 a 10 anos</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="exp4" name="experiencia" value="10+" onChange={(e) => setExperiencia(e.target.value)} />
-            <label htmlFor="exp4">mais de 10 anos</label>
+          <div className="radio-group">
+            {opcoesExp.map(opcao => (
+              <label key={opcao}>
+                <input type="radio" name="tempoExperiencia" value={opcao} onChange={handleChange} checked={formData.tempoExperiencia === opcao} />
+                {opcao}
+              </label>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* --- Pergunta de Quantidade de Costureiros --- */}
-      <div className="form-group">
-        <label>Quantos costureiros trabalham com você?</label>
-        <div className="radio-group">
-          <div className="radio-option">
-            <input type="radio" id="qt1" name="quantidade" value="sozinho" onChange={(e) => setNumCostureiros(e.target.value)} />
-            <label htmlFor="qt1">Trabalho sozinho(a)</label>
+        {/* Pergunta 2: Tamanho da Equipe */}
+        <div className="form-group">
+          <div className="form-label-container">
+            <h3>{textos.equipe}</h3>
+            <SpeechButton textToSpeak={textos.equipe} />
           </div>
-          <div className="radio-option">
-            <input type="radio" id="qt2" name="quantidade" value="2" onChange={(e) => setNumCostureiros(e.target.value)} />
-            <label htmlFor="qt2">2 costureiros</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="qt3" name="quantidade" value="3-5" onChange={(e) => setNumCostureiros(e.target.value)} />
-            <label htmlFor="qt3">De 3 a 5 costureiros</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="qt4" name="quantidade" value="6-9" onChange={(e) => setNumCostureiros(e.target.value)} />
-            <label htmlFor="qt4">de 6 a 9 costureiros</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="qt5" name="quantidade" value="10+" onChange={(e) => setNumCostureiros(e.target.value)} />
-            <label htmlFor="qt5">10 ou mais costureiros</label>
+          <div className="radio-group">
+            {opcoesEquipe.map(opcao => (
+              <label key={opcao}>
+                <input type="radio" name="numCostureiros" value={opcao} onChange={handleChange} checked={formData.numCostureiros === opcao} />
+                {opcao}
+              </label>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* --- Pergunta de Disponibilidade --- */}
-      <div className="form-group">
-        <label>Qual a sua disponibilidade para produção?</label>
-        <div className="radio-group">
-          <div className="radio-option">
-            <input type="radio" id="disp1" name="disponibilidade" value="geral" onChange={(e) => setDisponibilidade(e.target.value)} />
-            <label htmlFor="disp1">Geral (manhã e tarde)</label>
+        {/* Pergunta 3: Disponibilidade */}
+        <div className="form-group">
+          <div className="form-label-container">
+            <h3>{textos.disp}</h3>
+            <SpeechButton textToSpeak={textos.disp} />
           </div>
-          <div className="radio-option">
-            <input type="radio" id="disp2" name="disponibilidade" value="manha" onChange={(e) => setDisponibilidade(e.target.value)} />
-            <label htmlFor="disp2">Manhã</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="disp3" name="disponibilidade" value="tarde" onChange={(e) => setDisponibilidade(e.target.value)} />
-            <label htmlFor="disp3">Tarde</label>
-          </div>
-          <div className="radio-option">
-            <input type="radio" id="disp4" name="disponibilidade" value="fds" onChange={(e) => setDisponibilidade(e.target.value)} />
-            <label htmlFor="disp4">Apenas finais de semana</label>
+          <div className="radio-group">
+            {opcoesDisp.map(opcao => (
+              <label key={opcao}>
+                <input type="radio" name="disponibilidade" value={opcao} onChange={handleChange} checked={formData.disponibilidade === opcao} />
+                {opcao}
+              </label>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* --- Pergunta de Especialidades --- */}
-      <div className="form-group">
-        <label htmlFor="especialidades">Suas especialidades:</label>
-        <input 
-          type="text" 
-          id="especialidades" 
-          placeholder="Ex.: Malha, moda praia, etc"
-          value={especialidades}
-          onChange={(e) => setEspecialidades(e.target.value)} 
-        />
-        <p className="dica">Dica: Para múltiplas respostas, separe-as por vírgula (,)</p>
-      </div>
+        {/* Pergunta 4: Especialidade */}
+        <div className="form-group">
+          <div className="form-label-container">
+            <label htmlFor="especialidade">{textos.esp}</label>
+            <SpeechButton textToSpeak={textos.esp} />
+          </div>
+          <input type="text" id="especialidade" name="especialidade" value={formData.especialidade} onChange={handleChange} placeholder="Ex.: Malhas, modinha, bonés, etc." />
+        </div>
 
-      {/* --- Pergunta de Máquinas --- */}
-      <div className="form-group">
-        <label htmlFor="maquinas">Suas Maquinas:</label>
-        <input 
-          type="text" 
-          id="maquinas"
-          placeholder="Ex.: Reta, Overloque, ponto conjugado, etc" 
-          value={maquinas}
-          onChange={(e) => setMaquinas(e.target.value)}
-        />
-        <p className="dica">Dica: Para múltiplas respostas, separe-as por vírgula (,)</p>
-      </div>
+        {/* Pergunta 5: Máquinas */}
+        <div className="form-group">
+          <div className="form-label-container">
+            <label htmlFor="maquinas">{textos.maq}</label>
+            <SpeechButton textToSpeak={textos.maq} />
+          </div>
+          <input type="text" id="maquinas" name="maquinas" value={formData.maquinas} onChange={handleChange} placeholder="Ex.: Reta, Overloque, ponto conjugado, etc." />
+        </div>
+
+        <button type="submit" className="btn-finalizar">Finalizar Cadastro</button>
+
+      </form>
     </div>
   );
 }
 
-export default CadastroStep2;
+export default CadastroStep2Page;

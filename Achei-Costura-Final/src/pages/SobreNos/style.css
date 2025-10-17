@@ -1,0 +1,54 @@
+.sobre-nos-container {
+  width: 100%;
+  background-color: #f8f9fa; 
+  padding: 40px 0;
+}
+
+.titulo-pagina {
+  text-align: center;
+  color: #006D5B; 
+  font-size: 2.8em;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.conteudo-sobre-nos {
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+.conteudo-sobre-nos p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  text-align: justify;
+}
+
+.cta-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* ... (todo o seu CSS anterior da página Sobre Nós continua aqui) ... */
+
+/* NOVO: Estilo para alinhar o botão ao lado dos parágrafos */
+.readable-section {
+  display: flex;
+  align-items: flex-start; /* Alinha os itens pelo topo */
+  gap: 15px;
+  margin-bottom: 25px; /* Mantém o mesmo espaçamento que os parágrafos tinham */
+}
+
+.readable-section p {
+  margin: 0; /* Remove a margem padrão do parágrafo */
+  flex: 1;   /* Permite que o parágrafo ocupe o espaço e quebre a linha corretamente */
+  text-align: justify; /* Mantém o texto justificado */
+  line-height: 1.6;
+  font-size: 1.1em;
+}

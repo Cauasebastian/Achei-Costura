@@ -99,3 +99,35 @@
 .btn-assinar:hover {
   opacity: 0.9;
 }
+
+.card-header {
+  text-align: center; /* Centraliza o título */
+  margin-bottom: 20px;
+}
+
+/* Garante que o título não tenha margem extra */
+.card-header h2 {
+  margin: 0;
+  font-size: 1.8em;
+}
+
+/* NOVO: Container para a área de ações na base do card */
+.card-actions {
+  text-align: center; /* Centraliza o conteúdo (botão de áudio) */
+  margin-top: auto; /* Empurra a área de ações para o final do card */
+  padding-top: 20px; /* Espaço acima do botão de áudio */
+}
+
+/* Garante que o botão principal ocupe a largura toda e tenha margem */
+.card-actions .btn-assinar {
+  width: 100%;
+  margin-top: 15px; /* Espaço entre o botão de áudio e o de assinar */
+}
+
+/* Para que a mágica do 'margin-top: auto' funcione,
+   o container do card precisa ser flexbox e em coluna. */
+.plano-card {
+  /* ... (outros estilos como background, padding, etc.) ... */
+  display: flex;
+  flex-direction: column;
+}
