@@ -50,8 +50,8 @@
 /* Novo estilo para as setas, posicionadas nas extremidades */
 .carrossel-arrow-novo {
   background-color: transparent;
-  border: 2px solid #008080;
-  color: #008080;
+  border: 2px solid #006D5B;
+  color: #006D5B;
   border-radius: 50%;
   width: 35px;
   height: 35px;
@@ -67,7 +67,7 @@
 }
 
 .carrossel-arrow-novo:hover {
-  background-color: #008080;
+  background-color: #006D5B;
   color: white;
 }
 

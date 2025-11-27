@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .plano-card.popular {
@@ -33,16 +33,35 @@
   border-width: 2px;
 }
 
-.tag-popular {
+.plano-tag {
   position: absolute;
-  top: 15px;
-  right: -45px;
-  background-color: var(--cor-detalhe);
+  top: 18px;
+  right: -55px; 
   color: white;
-  padding: 5px 40px;
+  padding: 5px 0;
+  width: 170px; 
+  text-align: center;
   transform: rotate(45deg);
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   font-weight: bold;
+  z-index: 1; 
+}
+
+
+.plano-tag.popular {
+  background-color: var(--cor-detalhe); 
+}
+
+.plano-tag.flexivel {
+  background-color: var(--cor-principal); 
+}
+
+.plano-tag.economia {
+  background-color: #f0ad4e; 
+}
+
+.plano-tag.valor {
+  background-color: #343a40; 
 }
 
 .plano-card h2 {
@@ -56,7 +75,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  flex-grow: 1; /* Empurra o botão para baixo */
+  flex-grow: 1; 
 }
 
 .plano-card li {
@@ -94,6 +113,8 @@
   cursor: pointer;
   margin-top: 20px;
   transition: opacity 0.2s;
+  z-index: 2; 
+  position: relative; 
 }
 
 .btn-assinar:hover {
@@ -101,33 +122,45 @@
 }
 
 .card-header {
-  text-align: center; /* Centraliza o título */
+  text-align: center;
   margin-bottom: 20px;
+  z-index: 2; 
+  position: relative;
 }
 
-/* Garante que o título não tenha margem extra */
 .card-header h2 {
   margin: 0;
   font-size: 1.8em;
 }
 
-/* NOVO: Container para a área de ações na base do card */
-.card-actions {
-  text-align: center; /* Centraliza o conteúdo (botão de áudio) */
-  margin-top: auto; /* Empurra a área de ações para o final do card */
-  padding-top: 20px; /* Espaço acima do botão de áudio */
+.plano-card.card-coins {
+  border: 2px solid #f0c419; /* Borda Dourada */
+  background-color: #fffcf0; /* Fundo levemente amarelado para destacar */
 }
 
-/* Garante que o botão principal ocupe a largura toda e tenha margem */
-.card-actions .btn-assinar {
-  width: 100%;
-  margin-top: 15px; /* Espaço entre o botão de áudio e o de assinar */
-}
-
-/* Para que a mágica do 'margin-top: auto' funcione,
-   o container do card precisa ser flexbox e em coluna. */
-.plano-card {
-  /* ... (outros estilos como background, padding, etc.) ... */
+.coin-image-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.coin-img {
+  width: 120px; /* Tamanho da imagem da moeda */
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.plano-card.card-coins:hover .coin-img {
+  transform: scale(1.1) rotate(10deg); /* Efeito divertido ao passar o mouse */
+}
+
+/* Botão com cor diferente para diferenciar de Assinatura */
+.btn-coins {
+  background-color: #f0c419; /* Cor Dourada */
+  color: #333; /* Texto escuro para contraste */
+}
+
+.btn-coins:hover {
+  background-color: #d9b015;
 }

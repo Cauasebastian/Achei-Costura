@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCostureiros } from '../../data/api'; // Importa APENAS a função de costureiros
+import { getCostureiros } from '../../data/api';
 import GridDeItens from '../../components/GridDeItens';
 import Filtros from '../../components/Filtros';
 import AnuncioCarrossel from '../../components/AnuncioCarrossel';
@@ -9,15 +9,14 @@ function HomePage() {
   const [allCostureiros, setAllCostureiros] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [selectedCity, setSelectedCity] = useState('');
+  const [sortBy, setSortBy] = useState(''); // Estado para o dropdown de ordenação
 
-  // Busca apenas os dados dos costureiros
   useEffect(() => {
     const costureiros = getCostureiros();
     setAllCostureiros(costureiros);
-    setFilteredItems(costureiros); // Define os itens iniciais
+    setFilteredItems(costureiros); 
   }, []);
 
-  // Filtra a lista de costureiros apenas pela cidade
   useEffect(() => {
     let itemsToFilter = allCostureiros;
 
@@ -25,22 +24,29 @@ function HomePage() {
       itemsToFilter = allCostureiros.filter(item => item.cidade === selectedCity);
     }
 
-    setFilteredItems(itemsToFilter);
+    let itemsToSort = [...itemsToFilter];
+
+    if (sortBy === 'MAIS_AVALIADOS') {
+      itemsToSort.sort((a, b) => b.avaliacao - a.avaliacao);
+    } else if (sortBy === 'MENOS_AVALIADOS') {
+      itemsToSort.sort((a, b) => a.avaliacao - b.avaliacao);
+    }
+
+    setFilteredItems(itemsToSort);
     
-  }, [selectedCity, allCostureiros]);
+  }, [selectedCity, sortBy, allCostureiros]);
 
   return (
     <div className="home-container">
-      {/* O Carrossel mostrará apenas costureiros */}
       <AnuncioCarrossel items={allCostureiros} />
 
-      {/* Renderiza o componente de Filtros simplificado */}
       <Filtros
         selectedCity={selectedCity}
         setSelectedCity={setSelectedCity}
+        sortBy={sortBy} 
+        setSortBy={setSortBy}
       />
 
-      {/* O Grid exibe os costureiros filtrados */}
       <GridDeItens itens={filteredItems} />
     </div>
   );

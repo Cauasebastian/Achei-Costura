@@ -1,16 +1,19 @@
 .main-footer {
   background-color: #ffffff;
-  padding: 40px 24px;
+  padding: 40px 30px; 
   margin-top: 60px;
   border-top: 1px solid #e0e0e0;
 }
 
 .footer-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: auto;
+  padding: 0; 
+  
   display: flex;
   justify-content: space-between;
-  align-items: center;    
+  align-items: center;
+  width: 100%;
 }
 
 .footer-logo img {
