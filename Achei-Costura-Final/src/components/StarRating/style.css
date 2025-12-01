@@ -16,53 +16,45 @@
   line-height: 1;
 }
 
-/* Configuração base da estrela */
 .star {
   transition: color 0.2s ease-in-out;
   display: inline-block;
 }
 
-/* Estrela Cheia */
 .star.on {
-  color: #f0c419; /* Dourado */
+  color: #f0c419; 
 }
 
-/* Estrela Vazia */
 .star.off {
-  color: #ccc; /* Cinza */
+  color: #ccc; 
 }
 
-/* --- CORREÇÃO DA MEIA ESTRELA --- */
 .star.half {
-  color: #ccc; /* A base fica Cinza */
+  color: #ccc; 
   position: relative; 
-  width: auto; /* Largura normal */
-  overflow: visible; /* Mostra a estrela toda */
+  width: auto; 
+  overflow: visible; 
 }
 
-/* Cria a metade dourada "por cima" da cinza */
 .star.half::before {
-  content: '\2605'; /* Código da estrela preenchida */
+  content: '\2605'; 
   position: absolute;
   left: 0;
   top: 0;
-  width: 50%; /* Ocupa exatamente 50% */
-  overflow: hidden; /* Corta o resto */
-  color: #f0c419; /* Dourado */
+  width: 50%; 
+  overflow: hidden; 
+  color: #f0c419; 
   pointer-events: none;
 }
 
-/* Ajuste de espaçamento entre estrelas */
 .star-button:not(:last-child) {
   margin-right: 2px; 
 }
 
-/* Hover: Se passar o mouse numa estrela desligada, ela fica amarelinha clara */
 .star-button:hover .star.off {
   color: #f0df8a;
 }
 
-/* Garante que a estrela 'on' ou 'half' mantenha a cor dourada no hover */
 .star-button.on:hover .star,
 .star-button:hover .star.half::before {
   color: #f0c419;

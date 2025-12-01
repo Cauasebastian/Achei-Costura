@@ -1,55 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import { getCostureiros } from '../../data/api';
-import GridDeItens from '../../components/GridDeItens';
-import Filtros from '../../components/Filtros';
-import AnuncioCarrossel from '../../components/AnuncioCarrossel';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './style.css'; 
 
-function HomePage() {
-  const [allCostureiros, setAllCostureiros] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
-  const [sortBy, setSortBy] = useState(''); // Estado para o dropdown de ordenação
+// --- DADOS MOCK ---
+const mockUsuarios = [
+  { id: 1, nome: "Gabriel Batista", categoria: "Modinha e Moda Praia", cidade: "Caruaru - PE", foto: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", destaque: true },
+  { id: 2, nome: "Sara Gabriely", categoria: "Costureira e Modelista", cidade: "Toritama - PE", foto: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", destaque: true },
+  { id: 3, nome: "Ana Silva", categoria: "Facção de Jeans", cidade: "Santa Cruz - PE", foto: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", destaque: false },
+  { id: 4, nome: "Carlos Malhas", categoria: "Atacado", cidade: "Caruaru - PE", foto: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80", destaque: false }
+];
 
-  useEffect(() => {
-    const costureiros = getCostureiros();
-    setAllCostureiros(costureiros);
-    setFilteredItems(costureiros); 
-  }, []);
+const Home = () => {
+  // Lógica do Carrossel
+  const destaques = mockUsuarios.filter(u => u.destaque); 
+  const [indexDestaque, setIndexDestaque] = useState(0);
 
-  useEffect(() => {
-    let itemsToFilter = allCostureiros;
-
-    if (selectedCity) {
-      itemsToFilter = allCostureiros.filter(item => item.cidade === selectedCity);
+  const mudarDestaque = (direcao) => {
+    if (direcao === 'prox') {
+      setIndexDestaque((prev) => (prev + 1) % destaques.length);
+    } else {
+      setIndexDestaque((prev) => (prev - 1 + destaques.length) % destaques.length);
     }
+  };
 
-    let itemsToSort = [...itemsToFilter];
-
-    if (sortBy === 'MAIS_AVALIADOS') {
-      itemsToSort.sort((a, b) => b.avaliacao - a.avaliacao);
-    } else if (sortBy === 'MENOS_AVALIADOS') {
-      itemsToSort.sort((a, b) => a.avaliacao - b.avaliacao);
-    }
-
-    setFilteredItems(itemsToSort);
-    
-  }, [selectedCity, sortBy, allCostureiros]);
+  const usuarioDestaque = destaques[indexDestaque];
 
   return (
     <div className="home-container">
-      <AnuncioCarrossel items={allCostureiros} />
+      
+      {/* 1. ÁREA DE DESTAQUE PREMIUM */}
+      <section className="destaque-section">
+        <div className="destaque-card">
+          
+          <button className="nav-btn prev" onClick={() => mudarDestaque('ant')}>
+             &lt;
+          </button>
+          
+          <div className="destaque-conteudo">
+            <div className="destaque-foto-wrapper">
+               <img src={usuarioDestaque.foto} alt={usuarioDestaque.nome} />
+               <span className="badge-vip">⭐ Destaque</span>
+            </div>
+            
+            <div className="destaque-info">
+              <h3>{usuarioDestaque.nome}</h3>
+              <p className="cargo">{usuarioDestaque.categoria}</p>
+              <p className="local">{usuarioDestaque.cidade}</p>
+              <Link to={`/perfil/${usuarioDestaque.id}`} className="btn-ver-perfil">
+                Ver Perfil
+              </Link>
+            </div>
+          </div>
 
-      <Filtros
-        selectedCity={selectedCity}
-        setSelectedCity={setSelectedCity}
-        sortBy={sortBy} 
-        setSortBy={setSortBy}
-      />
+          <button className="nav-btn next" onClick={() => mudarDestaque('prox')}>
+             &gt;
+          </button>
 
-      <GridDeItens itens={filteredItems} />
+        </div>
+      </section>
+
+      {/* 2. MIOLO DA PÁGINA */}
+      <div className="main-content">
+        
+        {/* BARRA DE TÍTULO E FILTROS */}
+        <div className="top-bar">
+          <h2 className="titulo-secao">Facções Disponíveis</h2>
+          
+          <div className="filtros-modernos">
+            <div className="select-wrapper">
+              <select>
+                <option>Ordenar por</option>
+                <option>Mais recentes</option>
+                <option>Relevância</option>
+              </select>
+            </div>
+            <div className="select-wrapper">
+              <select>
+                <option>Todas as Cidades</option>
+                <option>Caruaru</option>
+                <option>Toritama</option>
+                <option>Santa Cruz</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* GRID DE CARDS */}
+        <div className="cards-grid">
+          {mockUsuarios.map((user) => (
+            <div key={user.id} className="card">
+              <div className="card-header">
+                <img src={user.foto} alt={user.nome} />
+              </div>
+              <div className="card-body">
+                <h3>{user.nome}</h3>
+                <span className="card-categoria">{user.categoria}</span>
+                <span className="card-cidade">📍 {user.cidade}</span>
+                <button className="btn-card-action">Saiba mais</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
+};
 
-export default HomePage;
+export default Home;

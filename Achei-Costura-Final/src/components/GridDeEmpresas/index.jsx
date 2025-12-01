@@ -2,7 +2,6 @@ import React from 'react';
 import Card from '../Card';
 import './style.css';
 
-// GARANTE QUE ELE RECEBE 'tipo' E REPASSA PARA O CARD
 function GridDeEmpresas({ empresas, tipo }) {
   console.log("2. GridDeEmpresas recebeu o tipo:", tipo);
   if (!empresas || empresas.length === 0) {

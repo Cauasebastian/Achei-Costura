@@ -8,10 +8,10 @@ export function AuthProvider({ children }) {
 
   const login = () => {
     setIsLoggedIn(true);
-    // Usuário começa com 5 moedas para teste
+    // Usuário começa com 1 moeda para teste
     setUser({ 
       nome: 'Usuário Teste', 
-      coins: 5 
+      coins: 1 
     });
   };
 
@@ -20,16 +20,16 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  // NOVO: Função para gastar moedas
+  // Função para gastar moedas
   const gastarMoeda = () => {
     if (user && user.coins > 0) {
       setUser(prevUser => ({
         ...prevUser,
         coins: prevUser.coins - 1
       }));
-      return true; // Sucesso
+      return true; 
     }
-    return false; // Saldo insuficiente
+    return false; 
   };
 
   const value = { isLoggedIn, login, logout, user, gastarMoeda };
