@@ -1,57 +1,95 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { authService } from '../data/api';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [isInitializing, setIsInitializing] = useState(true); // Estado de carregamento
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const initializeAuth = () => {
-      const isDevelopment = process.env.NODE_ENV === 'development';
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
       
-      // Tenta carregar do localStorage primeiro
-      const savedUser = localStorage.getItem('dev_user');
-      
-      if (savedUser) {
-        // Restaura do localStorage
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
-        setIsLoggedIn(true);
-        console.log('🔄 Usuário restaurado do localStorage');
-      } else if (isDevelopment) {
-        // Login automático apenas se não tiver usuário salvo
-        console.log('🔄 Login automático para desenvolvimento');
-        const devUser = { 
-          nome: 'Usuário Teste', 
-          coins: 1 
+      if (token && savedUser) {
+        setUser(JSON.parse(savedUser));
+        //adicionar 10 moedas ao logar
+        const updatedUser = {
+          ...JSON.parse(savedUser),
+          coins: (JSON.parse(savedUser).coins || 0) + 10
         };
-        setUser(devUser);
+        setUser(updatedUser);
         setIsLoggedIn(true);
-        localStorage.setItem('dev_user', JSON.stringify(devUser));
       }
       
       setIsInitializing(false);
     };
     
     initializeAuth();
-  }, []); // Executa apenas uma vez
+  }, []);
 
-  const login = () => {
-    setIsLoggedIn(true);
-    const newUser = { 
-      nome: 'Usuário Teste', 
-      coins: 1 
-    };
-    setUser(newUser);
-    localStorage.setItem('dev_user', JSON.stringify(newUser));
+  const login = async (email, password) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await authService.login(email, password);
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsLoggedIn(true);
+        return { success: true };
+      } else {
+        setError(result.message);
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      const message = error.message || 'Erro ao fazer login';
+      setError(message);
+      return { success: false, message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (userData) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await authService.register(userData);
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsLoggedIn(true);
+        return { success: true };
+      } else {
+        setError(result.message);
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      const message = error.message || 'Erro ao cadastrar';
+      setError(message);
+      return { success: false, message };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    setIsLoggedIn(false);
+    authService.logout();
     setUser(null);
-    localStorage.removeItem('dev_user');
+    setIsLoggedIn(false);
+    setError(null);
+  };
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   const gastarMoeda = () => {
@@ -60,8 +98,7 @@ export function AuthProvider({ children }) {
         ...user,
         coins: user.coins - 1
       };
-      setUser(updatedUser);
-      localStorage.setItem('dev_user', JSON.stringify(updatedUser));
+      updateUser(updatedUser);
       return true; 
     }
     return false; 
@@ -71,9 +108,14 @@ export function AuthProvider({ children }) {
     isLoggedIn, 
     login, 
     logout, 
+    register,
     user, 
+    updateUser,
     gastarMoeda,
-    isInitializing // Para mostrar loading se necessário
+    loading,
+    error,
+    setError,
+    isInitializing
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -81,11 +123,8 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  
-  // Opcional: Pode adicionar um loading enquanto inicializa
-  if (context.isInitializing) {
-    console.log('⏳ AuthContext ainda inicializando...');
+  if (!context) {
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }
-  
   return context;
 }

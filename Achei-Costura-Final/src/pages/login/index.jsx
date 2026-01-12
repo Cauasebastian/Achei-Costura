@@ -1,17 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // Trocando 'a' por 'Link'
-import SpeechButton from '../../components/SpeechButton'; // Nosso botão de áudio
-import './style.css'; 
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import SpeechButton from '../../components/SpeechButton';
+import { useAuth } from '../../context/AuthContext';
+import './style.css';
 
 export function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login, loading, error } = useAuth();
+  const navigate = useNavigate();
+
   const textoTitulo = "Login";
   const textoEmail = "Email";
   const textoSenha = "Senha";
 
-  // No futuro, você pode adicionar a lógica de login aqui
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Login simulado!');
+    
+    const result = await login(email, password);
+    
+    if (result.success) {
+      navigate('/');
+    }
   };
 
   return (
@@ -23,13 +33,26 @@ export function LoginPage() {
           <SpeechButton textToSpeak={textoTitulo} />
         </div>
         
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <div className="form-label-container">
               <label htmlFor="email">{textoEmail}</label>
               <SpeechButton textToSpeak={textoEmail} />
             </div>
-            <input type="email" id="email" name="email" required />
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
           </div>
           
           <div className="input-group">
@@ -37,16 +60,26 @@ export function LoginPage() {
               <label htmlFor="senha">{textoSenha}</label>
               <SpeechButton textToSpeak={textoSenha} />
             </div>
-            <input type="password" id="senha" name="senha" required />
+            <input 
+              type="password" 
+              id="senha" 
+              name="senha" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
           </div>
           
-          <button type="submit" className="auth-button">
-            Entrar
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
         <div className="auth-links">
-          {/* Usando <Link> em vez de <a> */}
           <Link to="/esqueci-senha">Esqueceu a sua senha?</Link>
           <Link to="/cadastro">Não possui um cadastro?</Link>
         </div>

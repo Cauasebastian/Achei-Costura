@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuth(); 
+  const { user, logout } = useAuth(); 
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -20,7 +20,7 @@ function Header() {
   };
 
   const handleLogout = () => {
-    signOut();
+    logout();
     closeMenu();
     navigate('/');
   };
@@ -66,7 +66,7 @@ function Header() {
                 
                 <div className="coins-display">
                   <img src={coinsIcon} alt="AC" className="coin-icon" />
-                  <span className="coin-text">{user.ac_coins || 0} AC</span>
+                  <span className="coin-text">{user.coins || 0} AC</span>
                 </div>
 
                 <Link to="/meu-perfil" className="profile-link" onClick={closeMenu}>
