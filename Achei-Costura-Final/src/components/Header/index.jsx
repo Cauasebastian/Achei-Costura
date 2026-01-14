@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth(); 
+  const { user, logout } = useAuth(); // Importe o logout
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -19,12 +19,12 @@ function Header() {
     setIsMenuOpen(false);
   };
 
-  const handleLogout = () => {
-    logout();
+ const handleLogout = async () => {
     closeMenu();
-    navigate('/');
+    await logout(); // Cortina sobe
+    navigate('/');  // Navega
+    finishTransition(); // Cortina desce
   };
-
   return (
     <header className="header">
       <div className="header-container">
