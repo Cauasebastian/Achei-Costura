@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { authService } from '../data/api';
 
 const AuthContext = createContext();
 
@@ -74,6 +75,7 @@ export function AuthProvider({ children }) {
     isLoggedIn, 
     login, 
     logout, 
+    register,
     user, 
     gastarMoeda, 
     isInitializing,

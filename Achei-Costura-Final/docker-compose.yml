@@ -10,8 +10,6 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      # Cache do Vite para melhor performance
-      - vite_cache:/app/node_modules/.vite
     environment:
       # Configurações específicas para Vite + Docker
       - CHOKIDAR_USEPOLLING=true
