@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
     initializeAuth();
   }, []);
 
-  // Agora login retorna uma Promise (permite usar await)
+  // Login (Simulado - Mock)
   const login = (userData) => {
     return new Promise((resolve) => {
       setLoadingAuth(true);
@@ -33,19 +33,42 @@ export function AuthProvider({ children }) {
       setTimeout(() => {
           const newUser = userData || { 
             nome: 'Usuário Teste', 
-            coins: 5 // Ajustei para 5 moedas como você mencionou
+            coins: 5 
           };
           setUser(newUser);
           setIsLoggedIn(true);
           localStorage.setItem('dev_user', JSON.stringify(newUser));
           
           setLoadingAuth(false);
-          resolve(); // Avisa que terminou!
+          resolve(); 
       }, 1500);
     });
   };
 
-  // Logout também retorna Promise
+  // --- CORREÇÃO: Adicionada a função register que faltava ---
+  const register = (userData) => {
+    return new Promise((resolve) => {
+      setLoadingAuth(true);
+
+      setTimeout(() => {
+          // Cria um usuário novo baseado nos dados recebidos no formulário
+          const newUser = {
+            ...userData,
+            coins: 10 // Bônus de cadastro
+          };
+
+          setUser(newUser);
+          setIsLoggedIn(true);
+          localStorage.setItem('dev_user', JSON.stringify(newUser));
+          
+          setLoadingAuth(false);
+          resolve(); 
+      }, 1500);
+    });
+  };
+  // -----------------------------------------------------------
+
+  // Logout
   const logout = () => {
     return new Promise((resolve) => {
       setLoadingAuth(true);
@@ -56,7 +79,7 @@ export function AuthProvider({ children }) {
           localStorage.removeItem('dev_user');
           
           setLoadingAuth(false);
-          resolve(); // Avisa que terminou!
+          resolve(); 
       }, 1500);
     });
   };
@@ -75,7 +98,7 @@ export function AuthProvider({ children }) {
     isLoggedIn, 
     login, 
     logout, 
-    register,
+    register, // Agora esta variável existe e não dará erro!
     user, 
     gastarMoeda, 
     isInitializing,

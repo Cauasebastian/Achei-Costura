@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react'; // Apenas esta linha para o React
 import { Link, useNavigate } from 'react-router-dom'; 
 import { useAuth } from '../../context/AuthContext'; 
 import SpeechButton from '../../components/SpeechButton'; 
-import './style.css'; 
+import './style.css';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loading, error } = useAuth();
+  const { login, loading, error, finishTransition } = useAuth();
   const navigate = useNavigate();
 
   const textoTitulo = "Login";
@@ -15,8 +15,8 @@ export function LoginPage() {
   const textoSenha = "Senha";
 
   // 3. Recuperamos as funções de lógica
-  const { login, finishTransition } = useAuth();
-  const navigate = useNavigate();
+  // const { login, finishTransition } = useAuth();
+  // const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

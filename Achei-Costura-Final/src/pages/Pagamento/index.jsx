@@ -6,38 +6,37 @@ import './style.css';
 const Pagamento = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // 1. RECEBE OS DADOS DA TELA DE PLANOS
-  // Se o usuário tentar entrar direto pelo link sem escolher plano, usa um padrão.
-  const produto = location.state || { 
-    nome: "Item Desconhecido", 
-    preco: "R$ 0,00", 
-    tipo: "desconhecido" 
+  const produto = location.state || {
+    nome: "Item Desconhecido",
+    preco: "R$ 0,00",
+    tipo: "desconhecido"
   };
 
   const [metodo, setMetodo] = useState('pix'); // Começa selecionado no PIX
   const [loading, setLoading] = useState(false);
   const [opcoesParcelamento, setOpcoesParcelamento] = useState([]);
 
-  // --- CÁLCULO DE PARCELAS (Roda ao abrir a tela) ---
+  // --- NOVO: ESTADO PARA O MODAL ---
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  // --- CÁLCULO DE PARCELAS ---
   useEffect(() => {
-    // Limpa a string de preço (Ex: "R$ 290,00" vira 290.00)
     const valorLimpo = produto.preco
       .replace("R$", "")
       .replace(/\./g, "")
       .replace(",", ".")
       .trim();
-    
+
     const valorNumerico = parseFloat(valorLimpo);
 
     if (!isNaN(valorNumerico) && valorNumerico > 0) {
       const opcoes = [];
-      const parcelaMinima = 5.00; // Mínimo de 5 reais por parcela
+      const parcelaMinima = 5.00;
 
       for (let i = 1; i <= 12; i++) {
         const valorParcela = valorNumerico / i;
-        
-        // Se a parcela ficar muito barata, para de dividir
         if (valorParcela < parcelaMinima && i > 1) break;
 
         opcoes.push({
@@ -47,7 +46,7 @@ const Pagamento = () => {
       }
       setOpcoesParcelamento(opcoes);
     } else {
-        setOpcoesParcelamento([{ qtd: 1, texto: `1x de ${produto.preco} (à vista)` }]);
+      setOpcoesParcelamento([{ qtd: 1, texto: `1x de ${produto.preco} (à vista)` }]);
     }
   }, [produto.preco]);
 
@@ -56,33 +55,37 @@ const Pagamento = () => {
     e.preventDefault();
     setLoading(true);
 
-    // AQUI ENTRARIA O CÓDIGO DO GATEWAY (Mercado Pago, Stripe, etc)
-    // Por enquanto, vamos simular que deu certo após 2 segundos
+    // Simula espera de 2 segundos
     setTimeout(() => {
       setLoading(false);
-      alert(`Sucesso! Você comprou: ${produto.nome} via ${metodo.toUpperCase()}`);
-      
-      // Aqui você mandaria para uma tela de "Obrigado" ou voltaria para Home
-      navigate('/'); 
+
+      // --- MUDANÇA: Em vez de alert(), abrimos o Modal ---
+      setMostrarModal(true);
     }, 2000);
+  };
+
+  // --- NOVO: Função para fechar o modal e sair ---
+  const fecharModal = () => {
+    setMostrarModal(false);
+    navigate('/'); // Redireciona para a Home (ou Dashboard)
   };
 
   return (
     <div className="pagamento-container">
       <div className="pagamento-card">
-        
+
         {/* CABEÇALHO */}
         <div className="pagamento-header">
           <button className="btn-voltar" onClick={() => navigate(-1)}>
             <FaArrowLeft />
           </button>
           <h2>Finalizar Pagamento</h2>
-          
+
           <div className="resumo-compra">
             <span className="produto-nome">{produto.nome}</span>
             <span className="produto-preco">{produto.preco}</span>
           </div>
-          
+
           <p className="seguranca-msg">
             <FaLock size={12} /> Ambiente Criptografado e Seguro
           </p>
@@ -90,7 +93,7 @@ const Pagamento = () => {
 
         {/* ABAS DE SELEÇÃO */}
         <div className="metodos-tab">
-          <button 
+          <button
             className={`tab-item ${metodo === 'pix' ? 'ativo' : ''}`}
             onClick={() => setMetodo('pix')}
           >
@@ -98,7 +101,7 @@ const Pagamento = () => {
             <span>PIX</span>
           </button>
 
-          <button 
+          <button
             className={`tab-item ${metodo === 'cartao' ? 'ativo' : ''}`}
             onClick={() => setMetodo('cartao')}
           >
@@ -106,7 +109,7 @@ const Pagamento = () => {
             <span>Cartão</span>
           </button>
 
-          <button 
+          <button
             className={`tab-item ${metodo === 'boleto' ? 'ativo' : ''}`}
             onClick={() => setMetodo('boleto')}
           >
@@ -117,7 +120,7 @@ const Pagamento = () => {
 
         {/* CONTEÚDO DINÂMICO (CORPO) */}
         <div className="pagamento-body">
-          
+
           {/* --- OPÇÃO PIX --- */}
           {metodo === 'pix' && (
             <div className="conteudo-aba fade-in">
@@ -139,7 +142,7 @@ const Pagamento = () => {
                 <label>Número do Cartão</label>
                 <input type="text" placeholder="0000 0000 0000 0000" required />
               </div>
-              
+
               <div className="row-dupla">
                 <div className="input-group">
                   <label>Validade</label>
@@ -190,6 +193,30 @@ const Pagamento = () => {
 
         </div>
       </div>
+
+      {/* --- CÓDIGO DO MODAL (ADICIONADO AQUI) --- */}
+      {mostrarModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="titulo-sucesso">Pagamento Concluído! 🎉</h2>
+
+            <p className="proposito-titulo">
+              <strong>Propósito (Achei Costura):</strong>
+            </p>
+
+            <p className="proposito-texto">
+              Conectar facções de costura a marcas e produtores de moda, gerando renda para quem costura e agilidade para quem confecciona.
+              <br></br>
+              IMPORTANTE: O Achei Costura atua como facilitador entre as partes e não se responsabiliza pela execução dos serviços. Recomendamos que verifique referências e trabalhos anteriores do profissional antes de fechar qualquer acordo.
+            </p>
+
+            <button className="btn-continuar" onClick={fecharModal}>
+              Continuar
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
