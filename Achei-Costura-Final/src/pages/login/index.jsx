@@ -7,7 +7,7 @@ import './style.css';
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loading, error } = useAuth();
+  const { login, loading, error, finishTransition } = useAuth();
   const navigate = useNavigate();
 
   const textoTitulo = "Login";

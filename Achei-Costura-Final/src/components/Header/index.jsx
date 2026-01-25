@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth(); // Importe o logout
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -19,22 +19,24 @@ function Header() {
     setIsMenuOpen(false);
   };
 
- const handleLogout = async () => {
+  const handleLogout = async () => {
     closeMenu();
-    await logout(); // Cortina sobe
-    navigate('/');  // Navega
-    finishTransition(); // Cortina desce
+    await logout(); 
+    navigate('/');  
   };
+
   return (
     <header className="header">
       <div className="header-container">
 
+        {/* LOGO */}
         <div className="logo-container">
           <Link to="/" onClick={closeMenu}>
             <img src={logo} alt="Achei Costura" className="logo-img" />
           </Link>
         </div>
 
+        {/* BARRA DE PESQUISA (Some no mobile) */}
         <div className="search-bar-container">
             <div className="search-input-wrapper">
                 <input 
@@ -48,10 +50,12 @@ function Header() {
             </div>
         </div>
 
+        {/* ÍCONE MENU MOBILE (Hambúrguer) */}
         <div className="mobile-menu-icon" onClick={toggleMenu}>
           {isMenuOpen ? <X size={40} /> : <List size={40} />}
         </div>
 
+        {/* MENU DE NAVEGAÇÃO */}
         <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           <ul className="nav-list">
             <li><NavLink to="/" className="nav-link" onClick={closeMenu}>Início</NavLink></li>

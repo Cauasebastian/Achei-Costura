@@ -108,7 +108,7 @@ export function AuthProvider({ children }) {
     isLoggedIn, 
     login, 
     logout, 
-    register,
+    register, 
     user, 
     updateUser,
     gastarMoeda,
