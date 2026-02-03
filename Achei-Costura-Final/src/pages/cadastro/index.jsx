@@ -23,7 +23,6 @@ function CadastroPage() {
         city: '',
         street: '',
         profileImage: null,
-        coins: 0,
         twoFactorEnabled: false,
         termsAccepted: false
     });
@@ -40,7 +39,6 @@ function CadastroPage() {
         city: '',
         street: '',
         profileImage: null,
-        coins: 0,
         twoFactorEnabled: false,
         termsAccepted: false
     });
@@ -75,42 +73,50 @@ function CadastroPage() {
     };
 
     const validateStep1 = () => {
-        const errors = {};
-        const data = cadastroTipo === 'faccao' ? formDataFaccao : formDataEmpresa;
+    const errors = {};
+    const data = cadastroTipo === 'faccao' ? formDataFaccao : formDataEmpresa;
 
-        if (!data.name.trim()) {
-            errors.name = 'Nome é obrigatório';
-        }
+    if (!data.name.trim()) {
+        errors.name = 'Nome é obrigatório';
+    }
+    
+    if (cadastroTipo === 'faccao' && !data.sobrenome.trim()) {
+        errors.sobrenome = 'Sobrenome é obrigatório';
+    }
+
+    if (!data.email.trim()) {
+        errors.email = 'Email é obrigatório';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        errors.email = 'Email inválido';
+    }
+
+    if (!data.phone.trim()) {
+        errors.phone = 'Telefone é obrigatório';
+    } else {
+        // Remove tudo que não é número para validar
+        const numbersOnly = data.phone.replace(/\D/g, '');
         
-        if (cadastroTipo === 'faccao' && !data.sobrenome.trim()) {
-            errors.sobrenome = 'Sobrenome é obrigatório';
+        // Valida se tem 10 ou 11 dígitos (com DDD)
+        if (numbersOnly.length < 10 || numbersOnly.length > 11) {
+            errors.phone = 'Telefone inválido. Use (99) 99999-9999 ou (99) 9999-9999';
         }
+    }
 
-        if (!data.email.trim()) {
-            errors.email = 'Email é obrigatório';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-            errors.email = 'Email inválido';
-        }
+    if (!data.password) {
+        errors.password = 'Senha é obrigatória';
+    } else if (data.password.length < 8) {
+        errors.password = 'Senha deve ter no mínimo 8 caracteres';
+    }
 
-        if (!data.phone.trim()) {
-            errors.phone = 'Telefone é obrigatório';
-        }
+    if (!data.confirmPassword) {
+        errors.confirmPassword = 'Confirme sua senha';
+    } else if (data.password !== data.confirmPassword) {
+        errors.confirmPassword = 'As senhas não conferem';
+    }
 
-        if (!data.password) {
-            errors.password = 'Senha é obrigatória';
-        } else if (data.password.length < 8) {
-            errors.password = 'Senha deve ter no mínimo 8 caracteres';
-        }
-
-        if (!data.confirmPassword) {
-            errors.confirmPassword = 'Confirme sua senha';
-        } else if (data.password !== data.confirmPassword) {
-            errors.confirmPassword = 'As senhas não conferem';
-        }
-
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
-    };
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+};
 
     const validateStep2 = () => {
         const errors = {};
@@ -193,6 +199,63 @@ function CadastroPage() {
         });
     };
 
+    const formatPhone = (phone) => {
+        // Remove tudo que não é número
+        const numbers = phone.replace(/\D/g, '');
+        
+        // Formata como (99) 99999-9999
+        if (numbers.length === 11) {
+            return `(${numbers.substring(0, 2)}) ${numbers.substring(2, 7)}-${numbers.substring(7)}`;
+        } else if (numbers.length === 10) {
+            return `(${numbers.substring(0, 2)}) ${numbers.substring(2, 6)}-${numbers.substring(6)}`;
+        }
+        return phone;
+    };
+
+    const handlePhoneChange = (e) => {
+    const { value } = e.target;
+    
+    // Remove caracteres não numéricos
+    const rawValue = value.replace(/\D/g, '');
+    
+    // Aplica a máscara dinamicamente
+    let formattedValue = '';
+    if (rawValue.length > 0) {
+        formattedValue = '(' + rawValue.substring(0, 2);
+        if (rawValue.length > 2) {
+            formattedValue += ') ' + rawValue.substring(2, 7);
+            if (rawValue.length > 7) {
+                // Para celular (9 dígitos)
+                formattedValue += '-' + rawValue.substring(7, 11);
+            } else if (rawValue.length > 6) {
+                // Para telefone fixo (8 dígitos)
+                formattedValue += '-' + rawValue.substring(6, 10);
+            }
+        }
+    }
+    
+    // Atualiza o estado com apenas números
+    if (cadastroTipo === 'faccao') {
+        setFormDataFaccao(prev => ({ 
+            ...prev, 
+            phone: rawValue
+        }));
+    } else {
+        setFormDataEmpresa(prev => ({ 
+            ...prev, 
+            phone: rawValue
+        }));
+    }
+    
+    // Atualiza o valor do input com a máscara
+    e.target.value = formattedValue;
+    
+    // Limpa erro do telefone se houver
+    if (formErrors.phone) {
+        setFormErrors(prev => ({ ...prev, phone: '' }));
+    }
+};
+
     const handleNextStep = () => {
         if (validateStep1()) {
             setCurrentStep(2);
@@ -203,13 +266,10 @@ function CadastroPage() {
         setCurrentStep(1);
     };
 
-    // Nova função para clicar nos steps
     const handleStepClick = (step) => {
         if (step === 1) {
-            // Sempre permite voltar para o step 1
             setCurrentStep(1);
         } else if (step === 2) {
-            // Só permite ir para o step 2 se o step 1 estiver válido
             if (validateStep1()) {
                 setCurrentStep(2);
             }
@@ -231,23 +291,24 @@ function CadastroPage() {
         let userData;
         const data = cadastroTipo === 'faccao' ? formDataFaccao : formDataEmpresa;
 
+        console.log('📝 Dados antes do envio:', data);
+
         // Preparar dados básicos
         userData = {
-            name: cadastroTipo === 'faccao' ? `${formDataFaccao.name} ${formDataFaccao.sobrenome}` : formDataEmpresa.name,
-            email: data.email,
+            name: cadastroTipo === 'faccao' ? `${formDataFaccao.name} ${formDataFaccao.sobrenome}`.trim() : formDataEmpresa.name.trim(),
+            email: data.email.trim(),
             password: data.password,
-            phone: data.phone,
+            phone: data.phone || '', // Garante que seja string vazia se não tiver
             category: data.category,
             type: data.type,
-            city: data.city,
-            street: data.street,
-            coins: data.coins || 0,
+            city: data.city.trim(),
+            street: data.street.trim(),
             twoFactorEnabled: data.twoFactorEnabled || false,
-            verified: false
+            verified: false,
+            role: cadastroTipo === 'faccao' ? 'USER' : 'EMPRESA'
         };
 
-        // Adicionar role baseado no tipo
-        userData.role = cadastroTipo === 'faccao' ? 'USER' : 'EMPRESA';
+        console.log('📤 Dados para envio:', userData);
 
         // Converter e adicionar imagem se existir
         if (data.profileImage) {
@@ -260,14 +321,19 @@ function CadastroPage() {
 
         const result = await register(userData);
         
+        console.log('📨 Resultado do cadastro:', result);
+        
         if (result.success) {
             if (cadastroTipo === 'faccao') {
                 navigate('/', { state: { userId: result.user?.id } });
                 alert('Cadastro de Fação concluído com sucesso!');
             } else {
-                navigate('/d');
+                navigate('/');
                 alert('Cadastro de Empresa concluído com sucesso!');
             }
+        } else {
+            // Exibir erro se houver
+            console.error('Erro no cadastro:', result.message);
         }
     };
 
@@ -285,7 +351,6 @@ function CadastroPage() {
                 city: '',
                 street: '',
                 profileImage: null,
-                coins: 0,
                 twoFactorEnabled: false,
                 termsAccepted: false
             });
@@ -301,7 +366,6 @@ function CadastroPage() {
                 city: '',
                 street: '',
                 profileImage: null,
-                coins: 0,
                 twoFactorEnabled: false,
                 termsAccepted: false
             });
@@ -356,7 +420,6 @@ function CadastroPage() {
                         className={`tab-button ${cadastroTipo === 'faccao' ? 'active' : ''}`}
                         onClick={() => {
                             setCadastroTipo('faccao');
-                            // Mantém os dados já preenchidos
                         }}
                     >
                         Facções
@@ -366,15 +429,12 @@ function CadastroPage() {
                         className={`tab-button ${cadastroTipo === 'empresa' ? 'active' : ''}`}
                         onClick={() => {
                             setCadastroTipo('empresa');
-                            // Não reseta mais o formulário aqui, apenas muda o tipo
-                            // Mantém os dados já preenchidos
                         }}
                     >
                         Empresas
                     </button>
                 </div>
 
-                {/* Progress steps clicáveis */}
                 <div className="form-progress">
                     <div 
                         className={`progress-step ${currentStep >= 1 ? 'active' : ''} ${currentStep === 1 ? 'current' : ''}`}
@@ -457,17 +517,16 @@ function CadastroPage() {
 
                         <div className="form-group">
                             <div className="form-label-container">
-                                <label htmlFor="phone">Telefone</label>
+                                <label htmlFor="phone">Telefone *</label>
                                 <SpeechButton textToSpeak="Telefone" />
                             </div>
                             <input 
                                 type="tel" 
                                 id="phone" 
                                 name="phone" 
-                                value={currentData.phone} 
-                                onChange={handleChange} 
+                                onChange={handlePhoneChange}
                                 required 
-                                placeholder="(11) 99999-9999"
+                                placeholder="(99) 99999-9999"
                                 className={formErrors.phone ? 'error-input' : ''}
                             />
                             {formErrors.phone && (
@@ -537,7 +596,7 @@ function CadastroPage() {
                     <>
                         <div className="form-group">
                             <div className="form-label-container">
-                                <label htmlFor="category">Categoria Principal</label>
+                                <label htmlFor="category">Categoria Principal *</label>
                                 <SpeechButton textToSpeak="Categoria Principal" />
                             </div>
                             <select
@@ -569,7 +628,7 @@ function CadastroPage() {
 
                         <div className="form-group">
                             <div className="form-label-container">
-                                <label htmlFor="city">Cidade</label>
+                                <label htmlFor="city">Cidade *</label>
                                 <SpeechButton textToSpeak="Cidade" />
                             </div>
                             <input 
@@ -588,7 +647,7 @@ function CadastroPage() {
 
                         <div className="form-group">
                             <div className="form-label-container">
-                                <label htmlFor="street">Rua</label>
+                                <label htmlFor="street">Rua *</label>
                                 <SpeechButton textToSpeak="Rua" />
                             </div>
                             <input 
@@ -643,7 +702,7 @@ function CadastroPage() {
                             </div>
                         </div>
 
-                       <div className="checkbox-group">
+                        <div className="checkbox-group">
                             <label className="checkbox-label">
                                 <input
                                     type="checkbox"

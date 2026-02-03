@@ -54,94 +54,78 @@ export const authService = {
   async register(userData) {
   try {
     console.log('📝 Iniciando cadastro para:', userData.email);
+    console.log('📦 Dados enviados:', JSON.stringify(userData, null, 2));
     
     // 1. Primeiro faz o cadastro
     const registerResponse = await api.post('/auth/register', userData);
     
     console.log('📨 Resposta do cadastro:', registerResponse.data);
     
-    // Verifica se o cadastro foi bem-sucedido (pode ser id, success, ou token)
-    const cadastroSucesso = (
-      registerResponse.data.id || 
-      registerResponse.data.success === true || 
-      registerResponse.data.token
-    );
-    
-    if (cadastroSucesso) {
+    // Verifica se o cadastro foi bem-sucedido
+    if (registerResponse.data && registerResponse.data.id) {
       console.log('✅ Cadastro realizado com sucesso');
       
-      // 2. Faz login automaticamente com as mesmas credenciais
-      const loginResponse = await api.post('/auth/login', {
-        email: userData.email,
-        password: userData.password
-      });
-      
-      console.log('🔑 Resposta do login:', loginResponse.data);
-      
-      // 3. Verifica se o login retornou um token
-      if (loginResponse.data.token) {
-        const token = loginResponse.data.token;
-        localStorage.setItem('token', token);
+      // 2. Faz login automaticamente
+      try {
+        const loginResponse = await api.post('/auth/login', {
+          email: userData.email,
+          password: userData.password
+        });
         
-        // 4. Busca os dados completos do usuário
-        let userDataResponse;
-        try {
-          const userResponse = await api.get('/users/me');
-          userDataResponse = userResponse.data;
-          console.log('👤 Dados do usuário obtidos:', userDataResponse);
-        } catch (userError) {
-          console.warn('⚠️ Não foi possível obter /users/me, usando dados básicos');
-          // Usa dados básicos se a rota /me não estiver disponível
-          userDataResponse = {
-            id: registerResponse.data.id || 'new-user',
-            name: userData.name,
-            email: userData.email,
-            role: userData.role || 'USER',
-            phone: userData.phone || '',
-            verified: false
+        console.log('🔑 Resposta do login:', loginResponse.data);
+        
+        if (loginResponse.data.token) {
+          const token = loginResponse.data.token;
+          localStorage.setItem('token', token);
+          
+          // 3. Busca os dados completos do usuário usando o ID retornado
+          let userDataResponse;
+          try {
+            // Tenta buscar pelo endpoint específico do usuário
+            const userResponse = await api.get(`/users/${registerResponse.data.id}`);
+            userDataResponse = userResponse.data;
+            console.log('👤 Dados do usuário obtidos:', userDataResponse);
+          } catch (userError) {
+            console.warn('⚠️ Não foi possível obter dados completos, usando dados básicos');
+            // Usa os dados retornados no registro
+            userDataResponse = registerResponse.data;
+          }
+          
+          // Armazena os dados do usuário
+          localStorage.setItem('user', JSON.stringify(userDataResponse));
+          
+          console.log('✅ Login automático realizado');
+          
+          return {
+            success: true,
+            user: userDataResponse,
+            token: token,
+            message: 'Cadastro realizado com sucesso!'
           };
         }
-        
-        // 5. Adiciona 10 moedas ao novo usuário
-        const userWithCoins = {
-          ...userDataResponse,
-          coins: (userDataResponse.coins || 0) + 10
-        };
-        
-        localStorage.setItem('user', JSON.stringify(userWithCoins));
-        
-        console.log('✅ Login automático realizado');
-        
+      } catch (loginError) {
+        console.warn('⚠️ Login automático falhou, mas cadastro foi realizado');
+        // Mesmo se o login falhar, o cadastro foi realizado
         return {
           success: true,
-          user: userWithCoins,
-          token: token,
-          message: 'Cadastro e login realizados com sucesso!'
-        };
-      } else {
-        // Se não conseguiu fazer login, mas o cadastro foi bem-sucedido
-        console.warn('⚠️ Cadastro OK, mas login falhou');
-        return {
-          success: false,
-          message: 'Cadastro realizado, mas não foi possível fazer login automaticamente. Por favor, faça login manualmente.'
+          message: 'Cadastro realizado com sucesso! Por favor, faça login.',
+          user: registerResponse.data
         };
       }
     } else {
-      // Se o cadastro falhou
-      console.error('❌ Cadastro falhou');
+      console.error('❌ Cadastro falhou - resposta inválida');
       return {
         success: false,
-        message: registerResponse.data?.message || 'Cadastro falhou'
+        message: 'Erro no cadastro: resposta inválida do servidor'
       };
     }
   } catch (error) {
-    console.error('❌ Erro no registro:', error); // CORRIGIDO: estava 'con' em vez de 'error'
+    console.error('❌ Erro no registro:', error);
     
     // Tratamento de erros específicos
     let errorMessage = 'Erro ao cadastrar';
     
     if (error.response) {
-      // Erro da API
       if (error.response.status === 400) {
         errorMessage = error.response.data?.message || 'Dados inválidos';
       } else if (error.response.status === 409) {
@@ -152,10 +136,8 @@ export const authService = {
         errorMessage = error.response.data?.message || `Erro ${error.response.status}`;
       }
     } else if (error.request) {
-      // Erro de rede
       errorMessage = 'Sem resposta do servidor. Verifique sua conexão.';
     } else {
-      // Outros erros
       errorMessage = error.message || 'Erro desconhecido';
     }
     
