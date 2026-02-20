@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getCostureiroById } from '../../data/api';
 import { useAuth } from '../../context/AuthContext';
 import StarRating from '../../components/StarRating';
-import coinsImg from '../../assets/coins.png'; // Importe a imagem da moeda
+import coinsImg from '../../assets/coins.png';
 import './style.css';
 
 function InfoCostureiroPage() {
@@ -11,15 +11,90 @@ function InfoCostureiroPage() {
   const { user, gastarMoeda } = useAuth();
   
   const [costureiro, setCostureiro] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [contatoVisivel, setContatoVisivel] = useState(false);
-  const [activeTab, setActiveTab] = useState('sobre'); // Estado para controlar a aba ativa
+  const [activeTab, setActiveTab] = useState('sobre');
 
+  // Busca os dados do costureiro na API
   useEffect(() => {
-    const data = getCostureiroById(id);
-    setCostureiro(data);
+    const fetchCostureiro = async () => {
+      try {
+        setLoading(true);
+        const data = await getCostureiroById(id);
+        if (data) {
+          setCostureiro(data);
+        } else {
+          setError('Costureiro não encontrado');
+        }
+      } catch (err) {
+        console.error('Erro ao buscar costureiro:', err);
+        setError('Erro ao carregar dados. Tente novamente mais tarde.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCostureiro();
   }, [id]);
 
-  if (!costureiro) return <div className="loading">Carregando...</div>;
+  // Função para formatar os dados recebidos da API para o formato esperado pela página
+  const formatCostureiroData = (apiData) => {
+    // Cria endereço completo
+    const enderecoParts = [];
+    if (apiData.street) enderecoParts.push(apiData.street);
+    if (apiData.city) enderecoParts.push(apiData.city);
+    if (apiData.state) enderecoParts.push(apiData.state);
+    if (apiData.zipCode) enderecoParts.push(apiData.zipCode);
+    const enderecoCompleto = enderecoParts.join(', ') || 'Endereço não informado';
+
+    // Cidade formatada
+    const cidadeFormatada = apiData.city && apiData.state 
+      ? `${apiData.city} - ${apiData.state}`
+      : (apiData.city || 'Cidade não informada');
+
+    // Contato (telefone) - mascara parcial se não estiver desbloqueado
+    const contatoMascarado = apiData.phone 
+      ? apiData.phone.replace(/(\d{2})(\d{4,5})(\d{4})/, '$1****-$3')
+      : '(**) ****-****';
+
+    // Avaliação (ratingAverage) - usa 0 se for null
+    const avaliacao = apiData.ratingAverage || 0;
+
+    // Foto (placeholder por enquanto)
+    const fotoUrl = 'https://via.placeholder.com/150'; // substituir futuramente pela imagem real
+
+    return {
+      nome: apiData.name,
+      categoria: apiData.category || 'Costura Geral',
+      cidade: cidadeFormatada,
+      avaliacao: avaliacao,
+      contato: contatoMascarado,
+      endereco: enderecoCompleto,
+      imageUrl: fotoUrl,
+      phoneReal: apiData.phone, // guarda o telefone real para quando desbloquear
+      emailReal: apiData.email,
+    };
+  };
+
+  // Se estiver carregando
+  if (loading) {
+    return <div className="loading">Carregando perfil...</div>;
+  }
+
+  // Se houve erro ou não encontrou
+  if (error || !costureiro) {
+    return (
+      <div className="error-container">
+        <h2>Ops! Algo deu errado</h2>
+        <p>{error || 'Costureiro não encontrado'}</p>
+        <Link to="/" className="btn-voltar">Voltar para home</Link>
+      </div>
+    );
+  }
+
+  // Aplica a formatação nos dados da API
+  const dadosFormatados = formatCostureiroData(costureiro);
 
   // Lógica para desbloquear o contato
   const handleDesbloquear = () => {
@@ -36,12 +111,12 @@ function InfoCostureiroPage() {
     }
   };
 
-  // Mock de dados para o Portfólio (já que não temos na API ainda)
+  // Mock de portfólio (pode ser substituído quando a API tiver esse recurso)
   const portfolioItems = [
     { type: 'foto', url: 'https://images.pexels.com/photos/461035/pexels-photo-461035.jpeg?auto=compress&cs=tinysrgb&w=600' },
     { type: 'foto', url: 'https://images.pexels.com/photos/3738088/pexels-photo-3738088.jpeg?auto=compress&cs=tinysrgb&w=600' },
     { type: 'foto', url: 'https://images.pexels.com/photos/985635/pexels-photo-985635.jpeg?auto=compress&cs=tinysrgb&w=600' },
-    { type: 'video', url: 'https://videos.pexels.com/video-files/4325372/4325372-hd_1920_1080_30fps.mp4' }, // Exemplo de vídeo
+    { type: 'video', url: 'https://videos.pexels.com/video-files/4325372/4325372-hd_1920_1080_30fps.mp4' },
     { type: 'foto', url: 'https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?auto=compress&cs=tinysrgb&w=600' },
   ];
 
@@ -49,20 +124,23 @@ function InfoCostureiroPage() {
     <div className="info-costureiro-container">
       {/* Cabeçalho do Perfil */}
       <div className="perfil-header">
-        <img src={costureiro.imageUrl} alt={costureiro.nome} className="perfil-avatar" />
+        <img src={dadosFormatados.imageUrl} alt={dadosFormatados.nome} className="perfil-avatar" />
         <div className="perfil-dados">
-          <h1>{costureiro.nome}</h1>
-          <p className="categoria">{costureiro.categoria}</p>
-          <p className="localizacao">📍 {costureiro.cidade}</p>
+          <h1>{dadosFormatados.nome}</h1>
+          <p className="categoria">{dadosFormatados.categoria}</p>
+          <p className="localizacao">📍 {dadosFormatados.cidade}</p>
           <div className="rating-display">
             <span>Avaliação: </span>
-            <span className="stars">{'★'.repeat(costureiro.avaliacao)}</span>
-            <span>({costureiro.avaliacao}.0)</span>
+            <span className="stars">
+              {'★'.repeat(Math.floor(dadosFormatados.avaliacao))}
+              {dadosFormatados.avaliacao % 1 !== 0 && '½'}
+            </span>
+            <span>({dadosFormatados.avaliacao.toFixed(1)})</span>
           </div>
         </div>
       </div>
 
-      {/* --- SISTEMA DE ABAS --- */}
+      {/* Sistema de Abas */}
       <div className="profile-tabs">
         <button 
           className={`tab-btn ${activeTab === 'sobre' ? 'active' : ''}`}
@@ -78,7 +156,7 @@ function InfoCostureiroPage() {
         </button>
       </div>
 
-      {/* --- CONTEÚDO DAS ABAS --- */}
+      {/* Conteúdo das Abas */}
       <div className="tab-content">
         
         {/* ABA 1: SOBRE E CONTATO */}
@@ -89,14 +167,14 @@ function InfoCostureiroPage() {
               
               {contatoVisivel ? (
                 <div className="contato-revelado">
-                  <p><strong>Whatsapp:</strong> {costureiro.contato.replace('****', '9876')}</p>
-                  <p><strong>Email:</strong> contato@exemplo.com</p>
-                  <p><strong>Endereço:</strong> {costureiro.endereco}</p>
+                  <p><strong>Whatsapp:</strong> {dadosFormatados.phoneReal || 'Não informado'}</p>
+                  <p><strong>Email:</strong> {dadosFormatados.emailReal || 'Não informado'}</p>
+                  <p><strong>Endereço:</strong> {dadosFormatados.endereco}</p>
                   <div className="sucesso-msg">✔ Contato liberado!</div>
                 </div>
               ) : (
                 <div className="bloqueio-area">
-                  <p className="blur-text">{costureiro.contato}</p>
+                  <p className="blur-text">{dadosFormatados.contato}</p>
                   <p className="aviso-bloqueio">Informações de contato ocultas</p>
                   
                   <div className="unlock-options">
@@ -121,7 +199,7 @@ function InfoCostureiroPage() {
           </div>
         )}
 
-        {/* ABA 2: PORTFÓLIO (FOTOS E VÍDEOS) */}
+        {/* ABA 2: PORTFÓLIO */}
         {activeTab === 'portfolio' && (
           <div className="portfolio-section animate-fade">
             <h3>Trabalhos Recentes</h3>
@@ -146,7 +224,6 @@ function InfoCostureiroPage() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

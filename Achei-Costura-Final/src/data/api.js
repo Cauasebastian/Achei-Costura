@@ -180,14 +180,45 @@ export const getEmpresas = async () => {
 // 3. TODAS as funções continuam com 'export' para não dar erro.
 export const getEmpresas = () => { return DADOS_DAS_EMPRESAS; };
 
-export const getCostureiros = () => { return DADOS_DOS_COSTUREIROS; };
 
 // 4. A função getAllItems agora retorna APENAS os costureiros.
 export const getAllItems = () => { return DADOS_DOS_COSTUREIROS; };
 
 export const getEmpresaById = (id) => { return DADOS_DAS_EMPRESAS.find(e => e.id === parseInt(id)); };
 
-export const getCostureiroById = (id) => { return DADOS_DOS_COSTUREIROS.find(c => c.id === parseInt(id)); };
+
+
+export const getCostureiros = async () => {
+  try {
+    const response = await api.get('/couturiers');
+    return response.data; // array de CouturierDTO
+  } catch (error) {
+    console.error('Erro ao buscar costureiros:', error);
+    return []; // retorna array vazio em caso de erro
+  }
+};
+
+// Função para buscar costureiros em destaque (top rated)
+export const getCostureirosDestaque = async (limit = 5) => {
+  try {
+    const response = await api.get(`/couturiers/top-rated?limit=${limit}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar destaques:', error);
+    return [];
+  }
+};
+
+// Função para buscar costureiro por ID
+export const getCostureiroById = async (id) => {
+  try {
+    const response = await api.get(`/couturiers/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar costureiro:', error);
+    return null;
+  }
+};
 
 // --- DADOS ESTÁTICOS (MANTIDOS PARA NÃO QUEBRAR OUTRAS PÁGINAS) ---
 // Se você remover isso, páginas que importam { DADOS_DOS_COSTUREIROS } vão quebrar.

@@ -1,44 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getCostureiros } from '../../data/api';
+import { getCostureiros, getCostureirosDestaque } from '../../data/api';
 import Card from '../../components/Card';
 import './style.css';
 import { useAuth } from '../../context/AuthContext';
 
 const Home = () => {
   const { user } = useAuth();
-
-  // 1. Lógica de Dados e Destaques
-  const todosCostureiros = getCostureiros();
-  const destaquesFiltrados = todosCostureiros.filter(c => c.isDestaque === true);
-  
-  // Se não houver destaques, usa os primeiros da lista como fallback
-  const listaParaDestaque = destaquesFiltrados.length > 0 ? destaquesFiltrados : todosCostureiros.slice(0, 2);
-
-  const usuariosHome = listaParaDestaque.map(u => ({
-     ...u,
-     foto: u.foto_url || u.imageUrl || "https://via.placeholder.com/150"
-  }));
-
-  const listaCostureiras = todosCostureiros;
-
-  // 2. Lógica do Carrossel
+  const [costureiros, setCostureiros] = useState([]);
+  const [destaques, setDestaques] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [indexDestaque, setIndexDestaque] = useState(0);
+
+  // Busca dados ao montar o componente
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Busca todos os costureiros
+        const todos = await getCostureiros();
+        setCostureiros(todos);
+
+        // Busca os destaques (top-rated)
+        const tops = await getCostureirosDestaque(5); // limit 5
+        setDestaques(tops.length > 0 ? tops : todos.slice(0, 2)); // fallback
+      } catch (error) {
+        console.error('Erro ao carregar home:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Navegação do carrossel
   const mudarDestaque = (direcao) => {
+    if (destaques.length === 0) return;
     if (direcao === 'prox') {
-      setIndexDestaque((prev) => (prev + 1) % usuariosHome.length);
+      setIndexDestaque((prev) => (prev + 1) % destaques.length);
     } else {
-      setIndexDestaque((prev) => (prev - 1 + usuariosHome.length) % usuariosHome.length);
+      setIndexDestaque((prev) => (prev - 1 + destaques.length) % destaques.length);
     }
   };
 
-  const usuarioDestaque = usuariosHome[indexDestaque];
+  // Prepara os dados para exibição
+  const prepararDados = (item) => ({
+    id: item.id,
+    nome: item.name,
+    foto: item.profileImageUrl || 'https://via.placeholder.com/150', // Ajuste conforme backend
+    categoria: item.category || 'Costura Geral',
+    cidade: item.city && item.state ? `${item.city} - ${item.state}` : (item.city || 'Local não informado'),
+    avaliacao: item.ratingAverage || 0,
+    servicos: item.category ? [item.category] : ['Costura'], // fallback
+    verified: item.verified || false,
+  });
+
+  // Se estiver carregando, mostra um skeleton ou loading
+  if (loading) {
+    return <div className="loading">Carregando...</div>;
+  }
+
+  const usuarioDestaque = destaques.length > 0 ? prepararDados(destaques[indexDestaque]) : null;
 
   return (
     <div className="home-container">
 
       {/* --- SEÇÃO DE DESTAQUE --- */}
-      {usuariosHome.length > 0 && usuarioDestaque && (
+      {destaques.length > 0 && usuarioDestaque && (
         <section className="destaque-section">
           <div className="destaque-card">
             
@@ -51,7 +80,7 @@ const Home = () => {
               </div>
               <div className="destaque-info">
                 <h3>{usuarioDestaque.nome}</h3>
-                <p className="cargo">{usuarioDestaque.categoria || "Costura Geral"}</p>
+                <p className="cargo">{usuarioDestaque.categoria}</p>
                 <p className="local">{usuarioDestaque.cidade}</p>
                 <Link to={`/costureiros/${usuarioDestaque.id}`} className="btn-ver-perfil">
                   Ver Perfil
@@ -65,7 +94,6 @@ const Home = () => {
       )}
 
       {/* --- GRID DE CARDS --- */}
-      {/* IMPORTANTE: Removi a div "main-content" daqui para não duplicar margens */}
       <div className="home-grid-area">
 
         {/* Barra de Filtros */}
@@ -83,8 +111,7 @@ const Home = () => {
               <select defaultValue="">
                 <option value="" disabled>Filtrar por Cidade</option>
                 <option value="todas">Todas as Cidades</option>
-                <option value="caruaru">Caruaru</option>
-                <option value="toritama">Toritama</option>
+                {/* Opções dinâmicas poderiam ser geradas a partir dos dados */}
               </select>
             </div>
           </div>
@@ -92,19 +119,22 @@ const Home = () => {
 
         {/* Grid */}
         <div className="cards-grid"> 
-          {listaCostureiras.map((costureira) => (
-            <Card
-              key={costureira.id}
-              id={costureira.id}
-              nome={costureira.nome}
-              imagem={costureira.imageUrl || costureira.foto_url} 
-              cidade={costureira.cidade}
-              avaliacao={costureira.nota || costureira.avaliacao || 5} 
-              servicos={costureira.tags || ["Costura", "Acabamento"]} 
-              premiumRequired={true} 
-              jaDesbloqueou={costureira.desbloqueado_pelo_usuario || false}
-            />
-          ))}
+          {costureiros.map((costureiro) => {
+            const item = prepararDados(costureiro);
+            return (
+              <Card
+                key={item.id}
+                id={item.id}
+                nome={item.nome}
+                imagem={item.foto}
+                cidade={item.cidade}
+                avaliacao={item.avaliacao}
+                servicos={item.servicos}
+                premiumRequired={true} // ou baseado em verified
+                jaDesbloqueou={false} // lógica futura
+              />
+            );
+          })}
         </div>
       </div>
     </div>

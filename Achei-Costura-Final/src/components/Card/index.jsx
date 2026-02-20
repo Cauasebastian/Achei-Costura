@@ -146,7 +146,7 @@ function Card({
                 // CASO 2: LIBERADO (Mostra botão de entrar)
                 <button 
                     className={`card-btn ${isAssinante ? 'btn-vip' : 'btn-ver'}`}
-                    onClick={() => handleNavegacao(`/perfil/${id}`)}
+                    onClick={() => handleNavegacao(`/costureiros/${id}`)}
                 >
                     {isAssinante ? (
                         <> <CheckCircleFill /> Acessar (VIP) </>
