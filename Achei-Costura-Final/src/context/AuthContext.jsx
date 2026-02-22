@@ -56,29 +56,30 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const register = async (userData) => {
-    setLoading(true);
-    setError(null);
+// AuthContext.js - método register modificado
+const register = async (userData) => {
+  setLoading(true);
+  setError(null);
+  
+  try {
+    const result = await authService.register(userData);
     
-    try {
-      const result = await authService.register(userData);
-      
-      if (result.success) {
-        setUser(result.user);
-        setIsLoggedIn(true);
-        return { success: true };
-      } else {
-        setError(result.message);
-        return { success: false, message: result.message };
-      }
-    } catch (error) {
-      const message = error.message || 'Erro ao cadastrar';
-      setError(message);
-      return { success: false, message };
-    } finally {
-      setLoading(false);
+    if (result.success) {
+      setUser(result.user);
+      setIsLoggedIn(true);
+      return { success: true, user: result.user }; // ✅ ADICIONADO: retorna o usuário
+    } else {
+      setError(result.message);
+      return { success: false, message: result.message };
     }
-  };
+  } catch (error) {
+    const message = error.message || 'Erro ao cadastrar';
+    setError(message);
+    return { success: false, message };
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = () => {
     authService.logout();

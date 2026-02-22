@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import SpeechButton from '../../components/SpeechButton';
+import SpeechButton from '../SpeechButton';
 import { useAuth } from '../../context/AuthContext';
 import './style.css';
 

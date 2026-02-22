@@ -4,7 +4,7 @@ import HomePage from '../pages/home';
 import InfoEmpresaPage from '../pages/info-empresa';
 import InfoCostureiroPage from '../pages/info-costureiro';
 import AnunciePage from '../pages/Anuncie';
-import CadastroPage from '../pages/cadastro';
+import CadastroPage from '../components/cadastro';
 import CadastroStep2Page from '../pages/CadastroStep2';
 import CadastroStep3Page from '../pages/CadastroStep3'; 
 import LoginPage from '../pages/login';
@@ -14,6 +14,7 @@ import SobreNosPage from '../pages/SobreNos';
 import PagamentoPage from '../pages/Pagamento';
 import ContatoPage from '../pages/Contato';
 import MeuPerfilPage from '../pages/MeuPerfil';
+import CadastroPage4 from '../pages/CadastroPage';
 
 
 function AppRoutes() {
@@ -33,6 +34,7 @@ function AppRoutes() {
       <Route path="/cadastrostep2" element={<CadastroStep2Page />} />
       <Route path="/cadastrostep3" element={<CadastroStep3Page />} /> 
       <Route path="/pagamento" element={<PagamentoPage />} />
+      <Route path="/CadastroPage" element={<CadastroPage4 />} />
     </Routes>
   );
 }
