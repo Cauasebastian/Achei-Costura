@@ -4,6 +4,7 @@ import { getCostureiros, getCostureirosDestaque } from '../../data/api';
 import Card from '../../components/Card';
 import './style.css';
 import { useAuth } from '../../context/AuthContext';
+import { getUserProfileImageById } from '../../data/api';
 
 const Home = () => {
   const { user } = useAuth();
@@ -33,6 +34,29 @@ const Home = () => {
 
     fetchData();
   }, []);
+  useEffect(() => {
+  const carregarFotoDestaque = async () => {
+    if (destaques.length === 0) return;
+
+    const usuario = destaques[indexDestaque];
+
+    if (usuario?.id) {
+      const fotoUrl = await getUserProfileImageById(usuario.id);
+
+      if (fotoUrl) {
+        setDestaques((prev) =>
+          prev.map((item, index) =>
+            index === indexDestaque
+              ? { ...item, profileImageUrl: fotoUrl }
+              : item
+          )
+        );
+      }
+    }
+  };
+
+  carregarFotoDestaque();
+}, [indexDestaque, destaques.length]);
 
   // Navegação do carrossel
   const mudarDestaque = (direcao) => {

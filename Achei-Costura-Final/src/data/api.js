@@ -220,6 +220,21 @@ export const getCostureiroById = async (id) => {
   }
 };
 
+// Buscar imagem de perfil por ID do usuário
+export const getUserProfileImageById = async (userId) => {
+  try {
+    const response = await api.get(`/images/profile/${userId}`, {
+      responseType: 'blob', // MUITO IMPORTANTE
+    });
+
+    // Converte blob para URL temporária
+    return URL.createObjectURL(response.data);
+  } catch (error) {
+    console.error('Erro ao buscar imagem de perfil:', error);
+    return null;
+  }
+};
+
 // --- DADOS ESTÁTICOS (MANTIDOS PARA NÃO QUEBRAR OUTRAS PÁGINAS) ---
 // Se você remover isso, páginas que importam { DADOS_DOS_COSTUREIROS } vão quebrar.
 export const DADOS_DOS_COSTUREIROS = [

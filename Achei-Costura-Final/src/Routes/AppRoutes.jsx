@@ -30,11 +30,12 @@ function AppRoutes() {
       <Route path="/costureiros/:id" element={<InfoCostureiroPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/esqueci-senha" element={<EsqueciSenhaPage />} />
-      <Route path="/cadastro" element={<CadastroPage />} />
+      {/* <Route path="/cadastro" element={<CadastroPage />} /> 
       <Route path="/cadastrostep2" element={<CadastroStep2Page />} />
       <Route path="/cadastrostep3" element={<CadastroStep3Page />} /> 
+      */}
       <Route path="/pagamento" element={<PagamentoPage />} />
-      <Route path="/CadastroPage" element={<CadastroPage4 />} />
+      <Route path="/cadastro" element={<CadastroPage4 />} />
     </Routes>
   );
 }
