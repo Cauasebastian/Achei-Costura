@@ -220,6 +220,24 @@ export const getCostureiroById = async (id) => {
   }
 };
 
+export const unlockProfile = async (couturierId) => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'EMPRESA') {
+      throw new Error('Usuário não é empresa');
+    }
+    const response = await api.post(`/enterprises/${user.id}/coins/unlock`, {
+      couturierId: couturierId
+    });
+    return response.data; // 200 OK (vazio)
+  } catch (error) {
+    console.error('Erro ao desbloquear perfil:', error);
+    // Se a API retornar mensagem de erro, extrai
+    const message = error.response?.data?.message || error.message;
+    throw new Error(message);
+  }
+};
+
 // Buscar imagem de perfil por ID do usuário
 export const getUserProfileImageById = async (userId) => {
   try {
@@ -234,6 +252,18 @@ export const getUserProfileImageById = async (userId) => {
     return null;
   }
 };
+export const fetchUserBalance = async () => {
+    if (!user || user.role !== 'EMPRESA') return;
+    try {
+      const response = await api.get(`/enterprises/${user.id}/coins/balance`);
+      const newBalance = response.data; // supondo que retorna apenas o número
+      // Atualiza o contexto com o novo saldo
+      const updatedUser = { ...user, coins: newBalance };
+      updateUser(updatedUser);
+    } catch (error) {
+      console.error('Erro ao buscar saldo:', error);
+    }
+  };
 
 // --- DADOS ESTÁTICOS (MANTIDOS PARA NÃO QUEBRAR OUTRAS PÁGINAS) ---
 // Se você remover isso, páginas que importam { DADOS_DOS_COSTUREIROS } vão quebrar.

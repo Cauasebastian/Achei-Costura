@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCostureiroById } from '../../data/api';
+import { getCostureiroById, getUserProfileImageById } from '../../data/api'; // 👈 import adicionado
 import { useAuth } from '../../context/AuthContext';
 import StarRating from '../../components/StarRating';
 import coinsImg from '../../assets/coins.png';
@@ -8,13 +8,16 @@ import './style.css';
 
 function InfoCostureiroPage() {
   const { id } = useParams();
-  const { user, gastarMoeda } = useAuth();
+  const { user, unlockProfile } = useAuth();
   
   const [costureiro, setCostureiro] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [contatoVisivel, setContatoVisivel] = useState(false);
   const [activeTab, setActiveTab] = useState('sobre');
+  const [desbloqueando, setDesbloqueando] = useState(false);
+  const [imagemUrl, setImagemUrl] = useState(null); // 👈 estado para a imagem
+  const [imagemCarregada, setImagemCarregada] = useState(false); // controle para evitar loops
 
   // Busca os dados do costureiro na API
   useEffect(() => {
@@ -24,6 +27,9 @@ function InfoCostureiroPage() {
         const data = await getCostureiroById(id);
         if (data) {
           setCostureiro(data);
+          if (data.unlocked) {
+            setContatoVisivel(true);
+          }
         } else {
           setError('Costureiro não encontrado');
         }
@@ -38,9 +44,55 @@ function InfoCostureiroPage() {
     fetchCostureiro();
   }, [id]);
 
-  // Função para formatar os dados recebidos da API para o formato esperado pela página
+  // Carrega a imagem quando o contato está visível e ainda não foi carregada
+  useEffect(() => {
+    const carregarImagem = async () => {
+      if (contatoVisivel && costureiro?.id && !imagemCarregada) {
+        try {
+          const url = await getUserProfileImageById(costureiro.id);
+          if (url) {
+            setImagemUrl(url);
+          }
+        } catch (error) {
+          console.error('Erro ao carregar imagem:', error);
+        } finally {
+          setImagemCarregada(true); // marca como tentada, mesmo se falhar
+        }
+      }
+    };
+    carregarImagem();
+  }, [contatoVisivel, costureiro?.id, imagemCarregada]);
+
+  // Função para desbloquear
+  const handleDesbloquear = async () => {
+    if (!user) {
+      alert("Você precisa fazer login para usar suas moedas.");
+      return;
+    }
+    if (user.role !== 'EMPRESA') {
+      alert("Apenas empresas podem desbloquear perfis.");
+      return;
+    }
+    setDesbloqueando(true);
+    try {
+      const result = await unlockProfile(id);
+      if (result.success) {
+        setContatoVisivel(true);
+        setCostureiro(prev => ({ ...prev, unlocked: true }));
+        // A imagem será carregada pelo useEffect acima
+        alert(`Contato desbloqueado! Você agora tem ${user.coins - 1} coins.`);
+      } else {
+        alert(result.message || "Erro ao desbloquear. Tente novamente.");
+      }
+    } catch (error) {
+      alert("Erro inesperado. Tente novamente.");
+    } finally {
+      setDesbloqueando(false);
+    }
+  };
+
+  // Formata os dados recebidos da API
   const formatCostureiroData = (apiData) => {
-    // Cria endereço completo
     const enderecoParts = [];
     if (apiData.street) enderecoParts.push(apiData.street);
     if (apiData.city) enderecoParts.push(apiData.city);
@@ -48,21 +100,15 @@ function InfoCostureiroPage() {
     if (apiData.zipCode) enderecoParts.push(apiData.zipCode);
     const enderecoCompleto = enderecoParts.join(', ') || 'Endereço não informado';
 
-    // Cidade formatada
     const cidadeFormatada = apiData.city && apiData.state 
       ? `${apiData.city} - ${apiData.state}`
       : (apiData.city || 'Cidade não informada');
 
-    // Contato (telefone) - mascara parcial se não estiver desbloqueado
     const contatoMascarado = apiData.phone 
       ? apiData.phone.replace(/(\d{2})(\d{4,5})(\d{4})/, '$1****-$3')
       : '(**) ****-****';
 
-    // Avaliação (ratingAverage) - usa 0 se for null
     const avaliacao = apiData.ratingAverage || 0;
-
-    // Foto (placeholder por enquanto)
-    const fotoUrl = 'https://via.placeholder.com/150'; // substituir futuramente pela imagem real
 
     return {
       nome: apiData.name,
@@ -71,8 +117,8 @@ function InfoCostureiroPage() {
       avaliacao: avaliacao,
       contato: contatoMascarado,
       endereco: enderecoCompleto,
-      imageUrl: fotoUrl,
-      phoneReal: apiData.phone, // guarda o telefone real para quando desbloquear
+      imageUrl: imagemUrl || 'https://via.placeholder.com/150', // usa imagem real ou placeholder
+      phoneReal: apiData.phone,
       emailReal: apiData.email,
     };
   };
@@ -93,23 +139,7 @@ function InfoCostureiroPage() {
     );
   }
 
-  // Aplica a formatação nos dados da API
   const dadosFormatados = formatCostureiroData(costureiro);
-
-  // Lógica para desbloquear o contato
-  const handleDesbloquear = () => {
-    if (!user) {
-      alert("Você precisa fazer login para usar suas moedas.");
-      return;
-    }
-
-    if (gastarMoeda()) {
-      setContatoVisivel(true);
-      alert(`Contato desbloqueado! Você agora tem ${user.coins - 1} coins.`);
-    } else {
-      alert("Saldo insuficiente! Compre mais coins na página de Planos.");
-    }
-  };
 
   // Mock de portfólio (pode ser substituído quando a API tiver esse recurso)
   const portfolioItems = [
@@ -178,9 +208,13 @@ function InfoCostureiroPage() {
                   <p className="aviso-bloqueio">Informações de contato ocultas</p>
                   
                   <div className="unlock-options">
-                    <button onClick={handleDesbloquear} className="btn-unlock coin-unlock">
+                    <button 
+                      onClick={handleDesbloquear} 
+                      className="btn-unlock coin-unlock"
+                      disabled={desbloqueando || (user && user.role !== 'EMPRESA')}
+                    >
                       <img src={coinsImg} alt="Coin" />
-                      Desbloquear com 1 Coin
+                      {desbloqueando ? 'Desbloqueando...' : 'Desbloquear com 1 Coin'}
                     </button>
                     
                     <Link to="/planos" className="btn-link-planos">

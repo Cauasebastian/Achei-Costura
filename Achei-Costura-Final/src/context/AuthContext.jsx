@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { authService } from '../data/api';
+import { unlockProfile as unlockProfileApi } from '../data/api';
+import api from '../data/api';
 
 const AuthContext = createContext();
 
@@ -10,27 +12,22 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const initializeAuth = () => {
-      const token = localStorage.getItem('token');
-      const savedUser = localStorage.getItem('user');
-      
-      if (token && savedUser) {
-        setUser(JSON.parse(savedUser));
-        //adicionar 10 moedas ao logar
-        const updatedUser = {
-          ...JSON.parse(savedUser),
-          coins: (JSON.parse(savedUser).coins || 0) + 10
-        };
-        setUser(updatedUser);
-        setIsLoggedIn(true);
-      }
-      
-      setIsInitializing(false);
-    };
+ useEffect(() => {
+  const initializeAuth = () => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
     
-    initializeAuth();
-  }, []);
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
+     
+      setIsLoggedIn(true);
+    }
+    
+    setIsInitializing(false);
+  };
+  
+  initializeAuth();
+}, []);
 
   const login = async (email, password) => {
     setLoading(true);
@@ -105,11 +102,44 @@ const register = async (userData) => {
     return false; 
   };
 
+// Dentro do AuthProvider
+const unlockProfile = async (couturierId) => {
+  setLoading(true);
+  setError(null);
+  try {
+    await unlockProfileApi(couturierId);
+    const updatedUser = { ...user, coins: (user.coins || 0) - 1 };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    return { success: true };
+  } catch (error) {
+    setError(error.message);
+    return { success: false, message: error.message };
+  } finally {
+    setLoading(false);
+  }
+};
+
+const fetchUserBalance = async () => {
+  if (!user || user.role !== 'EMPRESA') return;
+  try {
+    const response = await api.get(`/enterprises/${user.id}/coins/balance`);
+    const newBalance = response.data;
+    setUser(prev => ({ ...prev, coins: newBalance }));
+    localStorage.setItem('user', JSON.stringify({ ...user, coins: newBalance }));
+  } catch (error) {
+    console.error('Erro ao buscar saldo:', error);
+  }
+};
+
+
   const value = { 
     isLoggedIn, 
     login, 
     logout, 
-    register, 
+    register,
+    unlockProfile,
+    fetchUserBalance,
     user, 
     updateUser,
     gastarMoeda,

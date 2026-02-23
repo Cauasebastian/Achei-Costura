@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png'; 
 import coinsIcon from '../../assets/coins.png'; 
@@ -6,10 +6,25 @@ import './style.css';
 import { List, X, Search, BoxArrowRight, PersonCircle } from 'react-bootstrap-icons';
 import { useAuth } from '../../context/AuthContext';
 
+
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, fetchUserBalance } = useAuth();
   const navigate = useNavigate();
+  const hasFetchedBalance = useRef(false); // controla se já buscou o saldo
+
+
+   useEffect(() => {
+    // Só busca se for empresa e ainda não tiver buscado
+    if (user && user.role === 'EMPRESA' && !hasFetchedBalance.current) {
+      hasFetchedBalance.current = true; // marca que já buscou
+      fetchUserBalance();
+    }
+    // Se o usuário mudar (ex: logout), reseta a flag
+    if (!user) {
+      hasFetchedBalance.current = false;
+    }
+  }, [user, fetchUserBalance]); 
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -24,6 +39,8 @@ function Header() {
     await logout(); 
     navigate('/');  
   };
+  
+  
 
   return (
     <header className="header">
@@ -72,6 +89,7 @@ function Header() {
                   <img src={coinsIcon} alt="AC" className="coin-icon" />
                   <span className="coin-text">{user.coins || 0} AC</span>
                 </div>
+
 
                 <Link to="/meu-perfil" className="profile-link" onClick={closeMenu}>
                    <PersonCircle size={24} />

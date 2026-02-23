@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { getCostureiros, getCostureirosDestaque } from '../../data/api';
+import { getCostureiros, getCostureirosDestaque, getUserProfileImageById } from '../../data/api';
 import Card from '../../components/Card';
 import './style.css';
 import { useAuth } from '../../context/AuthContext';
-import { getUserProfileImageById } from '../../data/api';
 
 const Home = () => {
   const { user } = useAuth();
@@ -12,53 +11,65 @@ const Home = () => {
   const [destaques, setDestaques] = useState([]);
   const [loading, setLoading] = useState(true);
   const [indexDestaque, setIndexDestaque] = useState(0);
+  const [imagensCarregadas, setImagensCarregadas] = useState({});
+  const [imagensFalha, setImagensFalha] = useState({});
 
-  // Busca dados ao montar o componente
+  // --- 1. Função para carregar imagem com controle de falhas ---
+  const carregarImagem = useCallback(async (costureiroId) => {
+    // Se já carregou ou já falhou, não tenta novamente
+    if (imagensCarregadas[costureiroId] || imagensFalha[costureiroId]) return;
+
+    try {
+      const url = await getUserProfileImageById(costureiroId);
+      if (url) {
+        setImagensCarregadas(prev => ({ ...prev, [costureiroId]: url }));
+      } else {
+        // Marca como falha (ex: 404) para não tentar novamente
+        setImagensFalha(prev => ({ ...prev, [costureiroId]: true }));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar imagem', costureiroId, error);
+      setImagensFalha(prev => ({ ...prev, [costureiroId]: true }));
+    }
+  }, [imagensCarregadas, imagensFalha]);
+
+  // --- 2. Buscar dados iniciais (costureiros e destaques) ---
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Busca todos os costureiros
         const todos = await getCostureiros();
         setCostureiros(todos);
-
-        // Busca os destaques (top-rated)
-        const tops = await getCostureirosDestaque(5); // limit 5
-        setDestaques(tops.length > 0 ? tops : todos.slice(0, 2)); // fallback
+        const tops = await getCostureirosDestaque(5);
+        setDestaques(tops.length > 0 ? tops : todos.slice(0, 2));
       } catch (error) {
         console.error('Erro ao carregar home:', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
+
+  // --- 3. Disparar carregamento de imagens apenas para perfis desbloqueados ---
   useEffect(() => {
-  const carregarFotoDestaque = async () => {
-    if (destaques.length === 0) return;
-
-    const usuario = destaques[indexDestaque];
-
-    if (usuario?.id) {
-      const fotoUrl = await getUserProfileImageById(usuario.id);
-
-      if (fotoUrl) {
-        setDestaques((prev) =>
-          prev.map((item, index) =>
-            index === indexDestaque
-              ? { ...item, profileImageUrl: fotoUrl }
-              : item
-          )
-        );
+    costureiros.forEach(costureiro => {
+      if (costureiro.unlocked && !imagensCarregadas[costureiro.id] && !imagensFalha[costureiro.id]) {
+        carregarImagem(costureiro.id);
       }
+    });
+  }, [costureiros, imagensCarregadas, imagensFalha, carregarImagem]);
+
+  // --- 4. Carregar imagem do destaque atual (com a mesma lógica) ---
+  useEffect(() => {
+    if (destaques.length === 0) return;
+    const usuario = destaques[indexDestaque];
+    if (usuario?.id && !imagensCarregadas[usuario.id] && !imagensFalha[usuario.id]) {
+      carregarImagem(usuario.id);
     }
-  };
+  }, [indexDestaque, destaques, imagensCarregadas, imagensFalha, carregarImagem]);
 
-  carregarFotoDestaque();
-}, [indexDestaque, destaques.length]);
-
-  // Navegação do carrossel
+  // --- 5. Navegação do carrossel ---
   const mudarDestaque = (direcao) => {
     if (destaques.length === 0) return;
     if (direcao === 'prox') {
@@ -68,19 +79,19 @@ const Home = () => {
     }
   };
 
-  // Prepara os dados para exibição
+  // --- 6. Prepara dados para exibição (inclui a imagem se disponível) ---
   const prepararDados = (item) => ({
     id: item.id,
     nome: item.name,
-    foto: item.profileImageUrl || 'https://via.placeholder.com/150', // Ajuste conforme backend
+    foto: imagensCarregadas[item.id] || 'https://via.placeholder.com/150',
     categoria: item.category || 'Costura Geral',
     cidade: item.city && item.state ? `${item.city} - ${item.state}` : (item.city || 'Local não informado'),
     avaliacao: item.ratingAverage || 0,
-    servicos: item.category ? [item.category] : ['Costura'], // fallback
+    servicos: item.category ? [item.category] : ['Costura'],
     verified: item.verified || false,
+    unlocked: item.unlocked || false,
   });
 
-  // Se estiver carregando, mostra um skeleton ou loading
   if (loading) {
     return <div className="loading">Carregando...</div>;
   }
@@ -89,14 +100,11 @@ const Home = () => {
 
   return (
     <div className="home-container">
-
-      {/* --- SEÇÃO DE DESTAQUE --- */}
+      {/* Seção de destaque */}
       {destaques.length > 0 && usuarioDestaque && (
         <section className="destaque-section">
           <div className="destaque-card">
-            
             <button className="nav-btn prev" onClick={() => mudarDestaque('ant')}>&lt;</button>
-
             <div className="destaque-conteudo">
               <div className="destaque-foto-wrapper">
                 <img src={usuarioDestaque.foto} alt={usuarioDestaque.nome} />
@@ -111,16 +119,13 @@ const Home = () => {
                 </Link>
               </div>
             </div>
-
             <button className="nav-btn next" onClick={() => mudarDestaque('prox')}>&gt;</button>
           </div>
         </section>
       )}
 
-      {/* --- GRID DE CARDS --- */}
+      {/* Grid de cards */}
       <div className="home-grid-area">
-
-        {/* Barra de Filtros */}
         <div className="top-bar">
           <h2 className="titulo-secao">Facções Disponíveis</h2>
           <div className="filtros-modernos">
@@ -135,14 +140,12 @@ const Home = () => {
               <select defaultValue="">
                 <option value="" disabled>Filtrar por Cidade</option>
                 <option value="todas">Todas as Cidades</option>
-                {/* Opções dinâmicas poderiam ser geradas a partir dos dados */}
               </select>
             </div>
           </div>
         </div>
 
-        {/* Grid */}
-        <div className="cards-grid"> 
+        <div className="cards-grid">
           {costureiros.map((costureiro) => {
             const item = prepararDados(costureiro);
             return (
@@ -154,8 +157,8 @@ const Home = () => {
                 cidade={item.cidade}
                 avaliacao={item.avaliacao}
                 servicos={item.servicos}
-                premiumRequired={true} // ou baseado em verified
-                jaDesbloqueou={false} // lógica futura
+                premiumRequired={!item.verified}
+                jaDesbloqueou={item.unlocked}
               />
             );
           })}
